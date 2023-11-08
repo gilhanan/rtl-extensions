@@ -9,18 +9,24 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
+        "compiler": "tsc",
+        "runtimeChunk": false,
         "outputPath": "dist/extensions/chatgpt",
-        "index": "extensions/chatgpt/src/index.html",
-        "baseHref": "/",
-        "main": "extensions/chatgpt/src/main.tsx",
+        "index": "extensions/chatgpt/src/popup/popup.html",
+        "main": "extensions/chatgpt/src/popup/main.tsx",
         "tsConfig": "extensions/chatgpt/tsconfig.app.json",
-        "assets": [
-          "extensions/chatgpt/src/favicon.ico",
-          "extensions/chatgpt/src/assets"
+        "additionalEntryPoints": [
+          {
+            "entryName": "content/content",
+            "entryPath": "extensions/chatgpt/src/content/content.ts"
+          }
         ],
-        "styles": ["extensions/chatgpt/src/styles.scss"],
-        "scripts": [],
+        "assets": [
+          "extensions/chatgpt/src/manifest.json",
+          "extensions/chatgpt/src/images",
+          "extensions/chatgpt/src/_locales"
+        ],
+        "styles": ["extensions/chatgpt/src/popup/styles.scss"],
         "isolatedConfig": true,
         "webpackConfig": "extensions/chatgpt/webpack.config.js"
       },
@@ -39,7 +45,6 @@
             }
           ],
           "optimization": true,
-          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
