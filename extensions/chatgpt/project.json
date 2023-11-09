@@ -28,7 +28,8 @@
         ],
         "styles": ["extensions/chatgpt/src/popup/styles.scss"],
         "isolatedConfig": true,
-        "webpackConfig": "extensions/chatgpt/webpack.config.js"
+        "webpackConfig": "extensions/chatgpt/webpack.config.js",
+        "postcssConfig": "extensions/chatgpt/postcss.config.js"
       },
       "configurations": {
         "development": {
