@@ -2,7 +2,9 @@
   "name": "@rtl-extensions/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "nx run-many --target=build --all"
+  },
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.14.5",
