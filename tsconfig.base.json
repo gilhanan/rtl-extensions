@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@rtl-extensions/popup": ["libs/popup/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
