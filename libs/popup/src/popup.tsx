@@ -15,7 +15,6 @@ export function Popup({ brand: { name, url } }: PopupProps) {
     link: {
       href: url,
       text: name,
-      ariaLabel: chrome.i18n.getMessage('linkAriaLabel'),
     },
   };
 

@@ -6,7 +6,6 @@ const bannerProps: BannerProps = {
   link: {
     text: 'Test Link',
     href: 'https://testlink.com',
-    ariaLabel: 'Test Link',
   },
 };
 

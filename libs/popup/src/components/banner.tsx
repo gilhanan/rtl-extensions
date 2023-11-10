@@ -1,5 +1,4 @@
 interface Link {
-  ariaLabel: string;
   href: string;
   text: string;
 }
@@ -8,7 +7,7 @@ export interface BannerProps {
   link: Link;
 }
 
-export function Banner({ link: { href, text, ariaLabel } }: BannerProps) {
+export function Banner({ link: { href, text } }: BannerProps) {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-xl font-medium text-primary">
@@ -20,7 +19,7 @@ export function Banner({ link: { href, text, ariaLabel } }: BannerProps) {
           className="underline text-link"
           href={href}
           target="_blank"
-          aria-label={ariaLabel}
+          aria-label={chrome.i18n.getMessage('linkAriaLabel')}
           rel="noreferrer"
         >
           {text}
