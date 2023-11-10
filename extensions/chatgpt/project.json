@@ -26,7 +26,7 @@
           "extensions/chatgpt/src/images",
           "extensions/chatgpt/src/_locales"
         ],
-        "styles": ["extensions/chatgpt/src/popup/styles.scss"],
+        "styles": ["libs/styles/src/styles.scss"],
         "isolatedConfig": true,
         "webpackConfig": "extensions/chatgpt/webpack.config.js",
         "postcssConfig": "extensions/chatgpt/postcss.config.js"
