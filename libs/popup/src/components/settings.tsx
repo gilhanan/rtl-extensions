@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getRTLEnabledValue, setRTLEnabledValue } from '@rtl-extensions/utils';
+import {
+  getRTLEnabledValue,
+  sendToggleRTLGlobalMessage,
+  setRTLEnabledValue,
+} from '@rtl-extensions/utils';
 import { Select } from './select';
 
 export function Settings() {
@@ -14,6 +18,7 @@ export function Settings() {
   function onEnabledChange(enabled: boolean) {
     setRTLEnabledValue(enabled);
     setEnabled(enabled);
+    sendToggleRTLGlobalMessage(enabled);
   }
 
   useEffect(() => {
