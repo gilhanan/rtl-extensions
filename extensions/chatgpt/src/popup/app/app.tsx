@@ -1,11 +1,14 @@
-import styles from './app.module.scss';
+import { Popup, PopupProps } from '@rtl-extensions/popup';
+
+const popupProps: PopupProps = {
+  brand: {
+    name: 'ChatGPT',
+    url: 'https://chat.openai.com',
+  },
+};
 
 export function App() {
-  return (
-    <div className={styles.app}>
-      <h1>Welcome chatgpt</h1>
-    </div>
-  );
+  return <Popup {...popupProps} />;
 }
 
 export default App;

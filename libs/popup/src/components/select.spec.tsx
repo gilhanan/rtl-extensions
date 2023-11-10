@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import Popup from './popup';
+import Select from './select';
 
-describe('Popup', () => {
+describe('Select', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Popup />);
+    const { baseElement } = render(<Select />);
     expect(baseElement).toBeTruthy();
   });
 });
