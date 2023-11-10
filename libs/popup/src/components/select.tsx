@@ -9,7 +9,13 @@ const className = {
     'checked:after:translate-x-4 checked:after:bg-toggle-button-checked',
 };
 
-export function Select() {
+interface SelectProps {
+  loading: boolean;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
+
+export function Select({ loading, value, onChange }: SelectProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center">
@@ -19,12 +25,16 @@ export function Select() {
         >
           {chrome.i18n.getMessage('toggleSwitchLabel')}
         </label>
-        <input
-          className={Object.values(className).join(' ')}
-          type="checkbox"
-          role="switch"
-          id="toggle"
-        />
+        {!loading && (
+          <input
+            className={Object.values(className).join(' ')}
+            type="checkbox"
+            checked={value}
+            onChange={(event) => onChange(event.target.checked)}
+            role="switch"
+            id="toggle"
+          />
+        )}
       </div>
       <p className="text-xs text-secondary">
         {chrome.i18n.getMessage('toggleSwitchDescription')}
