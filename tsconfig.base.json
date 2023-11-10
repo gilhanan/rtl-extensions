@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@rtl-extensions/chrome": ["libs/chrome/src/index.ts"],
-      "@rtl-extensions/popup": ["libs/popup/src/index.ts"]
+      "@rtl-extensions/popup": ["libs/popup/src/index.ts"],
+      "@rtl-extensions/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
