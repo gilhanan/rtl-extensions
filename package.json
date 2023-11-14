@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "build": "nx run-many --target=build --all",
-    "chatgpt:watch": "nx build chatgpt --configuration=development --watch"
+    "chatgpt:watch": "nx build chatgpt --configuration=development --watch",
+    "claude:watch": "nx build claude --configuration=development --watch"
   },
   "private": true,
   "devDependencies": {

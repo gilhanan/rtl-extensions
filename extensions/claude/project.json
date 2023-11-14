@@ -9,20 +9,28 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
+        "compiler": "tsc",
+        "runtimeChunk": false,
         "outputPath": "dist/extensions/claude",
-        "index": "extensions/claude/src/index.html",
-        "baseHref": "/",
-        "main": "extensions/claude/src/main.tsx",
+        "index": "extensions/claude/src/popup/popup.html",
+        "main": "extensions/claude/src/popup/main.tsx",
         "tsConfig": "extensions/claude/tsconfig.app.json",
-        "assets": [
-          "extensions/claude/src/favicon.ico",
-          "extensions/claude/src/assets"
+        "additionalEntryPoints": [
+          {
+            "entryName": "content/content",
+            "entryPath": "extensions/claude/src/content/content.ts"
+          }
         ],
-        "styles": ["extensions/claude/src/styles.scss"],
+        "assets": [
+          "extensions/claude/src/manifest.json",
+          "extensions/claude/src/images",
+          "extensions/claude/src/_locales"
+        ],
+        "styles": ["libs/styles/src/styles.scss"],
         "scripts": [],
         "isolatedConfig": true,
-        "webpackConfig": "extensions/claude/webpack.config.js"
+        "webpackConfig": "extensions/claude/webpack.config.js",
+        "postcssConfig": "extensions/claude/postcss.config.js"
       },
       "configurations": {
         "development": {
@@ -39,7 +47,6 @@
             }
           ],
           "optimization": true,
-          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
