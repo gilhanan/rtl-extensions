@@ -21,12 +21,6 @@ const rtlRegex = new RegExp(
     .join('')}]`
 );
 
-export function containsRTL(text: string): boolean {
-  return rtlRegex.test(text);
-}
-
-export function getDirection(): 'rtl' | 'ltr' {
-  const uiLanguage = chrome.i18n.getUILanguage();
-
-  return ['he', 'ar'].includes(uiLanguage) ? 'rtl' : 'ltr';
+export function isRTLText(text: string | null): boolean {
+  return !!(text && rtlRegex.test(text));
 }

@@ -3,7 +3,7 @@ import {
   getRTLEnabledValue,
   sendToggleRTLGlobalMessage,
   setRTLEnabledValue,
-} from '@rtl-extensions/utils';
+} from '@rtl-extensions/rtl';
 import { Select } from './select';
 
 export function Settings() {

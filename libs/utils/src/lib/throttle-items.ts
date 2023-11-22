@@ -1,19 +1,23 @@
-export function throttle({
+export function throttleItems<T>({
   callback,
   limitInMs,
 }: {
-  callback: () => void;
+  callback: (items: T[]) => void;
   limitInMs: number;
-}): () => void {
+}): (items: T[]) => void {
+  const itemsToProcess = new Set<T>();
   let timeoutId: number;
   let lastRan: number;
 
   function callCallback() {
-    callback();
+    callback(Array.from(itemsToProcess));
     lastRan = Date.now();
+    itemsToProcess.clear();
   }
 
-  return () => {
+  return (items: T[]) => {
+    items.forEach((item) => itemsToProcess.add(item));
+
     if (!lastRan) {
       callCallback();
     } else {

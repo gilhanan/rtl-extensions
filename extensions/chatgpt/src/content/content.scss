@@ -1,16 +1,8 @@
+@import '../../../../libs/content/src/content.scss';
+
 .rtl-enabled {
-  .rtl {
-    direction: rtl !important;
-
-    > li:before {
-      padding-right: 0 !important;
-      padding-left: 0.5rem !important;
-      --tw-translate-x: 100% !important;
-    }
-
-    .math {
-      display: inline-block !important;
-      direction: ltr !important;
-    }
+  .math {
+    display: inline-block !important;
+    direction: ltr !important;
   }
 }
