@@ -1,0 +1,90 @@
+{
+  "name": "auto-rtl",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "extensions/auto-rtl/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/extensions/auto-rtl",
+        "index": "extensions/auto-rtl/src/index.html",
+        "baseHref": "/",
+        "main": "extensions/auto-rtl/src/main.tsx",
+        "tsConfig": "extensions/auto-rtl/tsconfig.app.json",
+        "assets": [
+          "extensions/auto-rtl/src/favicon.ico",
+          "extensions/auto-rtl/src/assets"
+        ],
+        "styles": ["extensions/auto-rtl/src/styles.scss"],
+        "scripts": [],
+        "isolatedConfig": true,
+        "webpackConfig": "extensions/auto-rtl/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "extensions/auto-rtl/src/environments/environment.ts",
+              "with": "extensions/auto-rtl/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "auto-rtl:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auto-rtl:build:development"
+        },
+        "production": {
+          "buildTarget": "auto-rtl:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["extensions/auto-rtl/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "extensions/auto-rtl/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
