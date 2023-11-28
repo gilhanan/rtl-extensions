@@ -9,7 +9,7 @@ function generateCharacters(startChar: string, endChar: string): string {
 
 const characters = generateCharacters('a', 'z');
 
-export function generateHash(length: number): string {
+export function generateHash(length = 7): string {
   return Array.from({ length }, () =>
     characters.charAt(Math.floor(Math.random() * characters.length))
   ).join('');

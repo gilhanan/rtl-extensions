@@ -1,84 +1,56 @@
 import {
   injectCSSOnce,
-  getCSSText,
   getConsistStyles,
   injectCSS,
   listItemsTags,
   getListItems,
+  swapStyleValues,
+  Styles,
 } from '@rtl-extensions/dom';
 import { generateHash } from '@rtl-extensions/utils';
 import { isRTLText } from './is-rtl-text';
+import { RTL_ENABLED_CLASS, tempDisableRTLGlobal } from './toggle-rtl';
 
-const RTL_LIST_CLASS = 'rtl-list';
+const transformsToClasses = new Map<string, string>();
+const appliedClasses = new Map<string, true>();
 
-interface Indentation {
-  paddingLeft: string;
-  paddingRight: string;
-  marginLeft: string;
-  marginRight: string;
-}
-
-function swapListPadding({
-  list,
-  rootClass,
-}: {
-  list: Element;
-  rootClass: string;
-}): void {
-  const { paddingLeft, paddingRight, marginLeft, marginRight } =
-    getComputedStyle(list);
-
-  if (paddingLeft === paddingRight && marginLeft === marginRight) {
-    return;
-  }
-
-  const styles: Indentation = {
-    paddingLeft: paddingRight || '0px',
-    paddingRight: paddingLeft || '0px',
-    marginLeft: marginRight || '0px',
-    marginRight: marginLeft || '0px',
-  };
-
-  injectCSSOnce({
+function swapListIndentation({ list }: { list: Element }): void {
+  swapStyleValues({
     element: list,
-    rule: (hashedClass) => `.${rootClass} .${RTL_LIST_CLASS}.${hashedClass}`,
-    styles,
+    styleProps: [
+      ['paddingLeft', 'paddingRight'],
+      ['marginLeft', 'marginRight'],
+    ],
+    rule: (hashedClass) => `.${RTL_ENABLED_CLASS} .${hashedClass}`,
   });
 }
 
-function swapListPaddingItems({
+function swapListItemsIndentation({
   list,
-  rootClass,
   pseudoElt,
 }: {
   list: Element;
-  rootClass: string;
   pseudoElt?: 'before';
 }): void {
-  const listItemsIndentation = getConsistStyles({
-    elements: getListItems({ list }),
-    styleProperties: [
-      'paddingLeft',
-      'paddingRight',
-      'marginLeft',
-      'marginRight',
-    ],
-    pseudoElt,
-  });
+  const margins = ['marginLeft', 'marginRight'] as const;
+  const paddings = ['paddingLeft', 'paddingRight'] as const;
 
-  if (!listItemsIndentation) {
-    return;
-  }
+  const consistStyles =
+    getConsistStyles({
+      elements: getListItems({ list }),
+      styleProperties: [...margins, ...paddings],
+      pseudoElt,
+    }) || {};
 
-  const { paddingLeft, paddingRight, marginLeft, marginRight } =
-    listItemsIndentation;
-
-  const styles: Indentation = {
-    paddingLeft: paddingRight || '0px',
-    paddingRight: paddingLeft || '0px',
-    marginLeft: marginRight || '0px',
-    marginRight: marginLeft || '0px',
-  };
+  const styles: Styles = Object.fromEntries(
+    [margins, paddings]
+      .map(([prop1, prop2]) => [
+        [prop1, consistStyles[prop2] || '0px'],
+        [prop2, consistStyles[prop1] || '0px'],
+      ])
+      .filter(([[, value1], [, value2]]) => value1 !== value2)
+      .flat()
+  );
 
   injectCSSOnce({
     element: list,
@@ -86,60 +58,38 @@ function swapListPaddingItems({
       listItemsTags
         .map(
           (tag) =>
-            `.${rootClass} .${RTL_LIST_CLASS}.${hashedClass} > ${tag}${
+            `.${RTL_ENABLED_CLASS} .${hashedClass} > ${tag}${
               pseudoElt ? `:${pseudoElt}` : ''
             }`
         )
-        .join(','),
+        .join(', '),
     styles,
   });
 }
 
-const transformsToClasses = new Map<string, string>();
-
 function fillTransformsToClasses({ elements }: { elements: Element[] }): void {
-  elements.forEach((element) => {
-    const { transform } = getComputedStyle(element, 'before');
+  elements
+    .map((element) => {
+      const { transform } = getComputedStyle(element, 'before');
 
-    if (!transform) {
-      return;
-    }
+      const matrix = new DOMMatrix(transform);
+      matrix.e = -matrix.e;
 
-    const matrix = new DOMMatrix(transform);
+      return { element, matrix };
+    })
+    .filter(({ matrix: { e } }) => e)
+    .forEach(({ element, matrix }) => {
+      const transformMatrix = matrix.toString();
 
-    if (!matrix.e) {
-      return;
-    }
+      const hashedClass =
+        transformsToClasses.get(transformMatrix) || generateHash();
 
-    matrix.e = -matrix.e;
-
-    const transformMatrix = matrix.toString();
-
-    const existingClass = transformsToClasses.get(transformMatrix);
-
-    if (existingClass) {
-      element.classList.add(existingClass);
-
-      return;
-    }
-
-    const hashedClass = generateHash(5);
-
-    transformsToClasses.set(transformMatrix, hashedClass);
-
-    element.classList.add(hashedClass);
-  });
+      transformsToClasses.set(transformMatrix, hashedClass);
+      element.classList.add(hashedClass);
+    });
 }
 
-const appliedClasses = new Map<string, true>();
-
-function swapListItemsMarkersTransform({
-  list,
-  rootClass,
-}: {
-  list: Element;
-  rootClass: string;
-}) {
+function swapListItemsMarkersTransform({ list }: { list: Element }) {
   fillTransformsToClasses({
     elements: getListItems({ list }),
   });
@@ -149,21 +99,13 @@ function swapListItemsMarkersTransform({
       return;
     }
     injectCSS({
-      rule: `.${rootClass} .${RTL_LIST_CLASS} .${hashedClass}:before`,
-      cssText: getCSSText({
+      rule: `.${RTL_ENABLED_CLASS} .${hashedClass}:before`,
+      styles: {
         transform,
-      }),
+      },
     });
     appliedClasses.set(hashedClass, true);
   });
-}
-
-function clearRTLListLayout({ list }: { list: Element }) {
-  list.classList.remove(RTL_LIST_CLASS);
-}
-
-function applyRTLListLayout({ list }: { list: Element }) {
-  list.classList.add(RTL_LIST_CLASS);
 }
 
 export function isListRTL({ list }: { list: Element }): boolean {
@@ -172,30 +114,28 @@ export function isListRTL({ list }: { list: Element }): boolean {
   );
 }
 
-export function rtlListLayout({
+export async function rtlListLayout({
   list,
-  rootClass,
 }: {
   list: Element;
-  rootClass: string;
-}): void {
-  clearRTLListLayout({ list });
-  swapListPadding({
-    list,
-    rootClass,
-  });
-  swapListPaddingItems({
-    list,
-    rootClass,
-  });
-  swapListPaddingItems({
-    list,
-    rootClass,
-    pseudoElt: 'before',
-  });
-  swapListItemsMarkersTransform({
-    list,
-    rootClass,
-  });
-  applyRTLListLayout({ list });
+}): Promise<void> {
+  const { restore } = await tempDisableRTLGlobal();
+
+  if (getComputedStyle(list).direction !== 'rtl') {
+    swapListIndentation({
+      list,
+    });
+    swapListItemsIndentation({
+      list,
+    });
+    swapListItemsIndentation({
+      list,
+      pseudoElt: 'before',
+    });
+    swapListItemsMarkersTransform({
+      list,
+    });
+  }
+
+  restore();
 }

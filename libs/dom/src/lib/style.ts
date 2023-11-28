@@ -1,28 +1,41 @@
-import { generateHash } from '@rtl-extensions/utils';
+import { camelCasetoKebabCase } from '@rtl-extensions/utils';
+import { StylePropsCamelCase, Styles } from './shared';
+import { injectCSSOnce } from './inject-css-once';
 
-type SupportedProperties = 'paddingLeft' | 'paddingRight' | 'transform';
+function computeStyle({
+  element,
+  pseudoElt,
+}: {
+  element: Element;
+  pseudoElt?: string;
+}) {
+  const styles = pseudoElt
+    ? getComputedStyle(element, pseudoElt)
+    : element.computedStyleMap();
 
-type Styles = Partial<Record<SupportedProperties, string>>;
+  function get(prop: StylePropsCamelCase): string | undefined {
+    const kebabCasedProp = camelCasetoKebabCase(prop);
+    return styles instanceof CSSStyleDeclaration
+      ? styles.getPropertyValue(kebabCasedProp)
+      : styles.get(kebabCasedProp)?.toString();
+  }
 
-type StringValueKeysOf<T> = {
-  [K in keyof T]: T[K] extends string ? K : never;
-}[keyof T];
-
-type StyleProperty = StringValueKeysOf<CSSStyleDeclaration>;
-
-const cssTextToClassName = new Map<string, string>();
+  return {
+    get,
+  };
+}
 
 export function getCSSText(styles: Styles): string {
   const rules = document.createElement('span').style;
 
   Object.entries(styles).forEach(([key, value]) => {
-    rules[key as SupportedProperties] = value as string;
+    rules[key as StylePropsCamelCase] = value as string;
   });
 
   return rules.cssText;
 }
 
-export function getConsistStyles<T extends StyleProperty[]>({
+export function getConsistStyles<T extends StylePropsCamelCase[]>({
   elements,
   styleProperties,
   pseudoElt,
@@ -31,74 +44,81 @@ export function getConsistStyles<T extends StyleProperty[]>({
   styleProperties: T;
   pseudoElt?: string;
 }): Partial<{ [K in T[number]]: string }> | null {
-  const styles: Partial<{ [K in T[number]]: string }> = {};
+  const consistStyles: Partial<{ [K in T[number]]: string }> = {};
 
   for (const element of elements) {
-    const computedStyle = getComputedStyle(element, pseudoElt);
+    const computedStyle = computeStyle({ element, pseudoElt });
 
     for (const prop of styleProperties) {
       const key = prop as T[number];
+      const value = computedStyle.get(key);
 
-      if (styles[key] === undefined) {
-        styles[key] = computedStyle[key];
+      if (consistStyles[key] === undefined) {
+        consistStyles[key] = value;
       }
 
-      if (styles[key] !== computedStyle[key]) {
+      if (consistStyles[key] !== value) {
         return null;
       }
     }
   }
 
   if (
-    styleProperties.every((prop) => styles[prop as T[number]] === undefined)
+    styleProperties.every(
+      (prop) => consistStyles[prop as T[number]] === undefined
+    )
   ) {
     return null;
   }
 
-  return styles;
+  return consistStyles;
 }
 
 export function injectCSS({
   rule,
-  cssText,
+  styles,
 }: {
   rule: string;
-  cssText: string;
+  styles: Styles | string;
 }): void {
   const style = document.createElement('style');
+
+  const cssText = typeof styles === 'string' ? styles : getCSSText(styles);
 
   style.innerHTML = `${rule} { ${cssText} }`;
 
   document.head.appendChild(style);
 }
 
-export function injectCSSOnce({
+export function swapStyleValues({
   element,
+  styleProps,
   rule,
-  styles,
 }: {
   element: Element;
+  styleProps: [StylePropsCamelCase, StylePropsCamelCase][];
   rule: (className: string) => string;
-  styles: Styles;
 }): void {
-  const cssText = getCSSText(styles);
+  const computedStyles = computeStyle({ element });
 
-  const existingClass = cssTextToClassName.get(cssText);
+  const styles: Styles = Object.fromEntries(
+    styleProps
+      .map(([prop1, prop2]) => ({
+        prop1,
+        prop2,
+        value1: computedStyles.get(prop1) || '0px',
+        value2: computedStyles.get(prop2) || '0px',
+      }))
+      .filter(({ value1, value2 }) => value1 !== value2)
+      .flatMap(({ prop1, prop2, value1, value2 }) => [
+        [prop1, value2],
+        [prop2, value1],
+      ])
+  );
 
-  if (existingClass) {
-    element.classList.add(existingClass);
-
-    return;
-  }
-
-  const hashedClass = generateHash(5);
-
-  element.classList.add(hashedClass);
-
-  injectCSS({
-    rule: rule(hashedClass),
-    cssText,
+  injectCSSOnce({
+    element,
+    rule,
+    styles,
   });
-
-  cssTextToClassName.set(cssText, hashedClass);
 }

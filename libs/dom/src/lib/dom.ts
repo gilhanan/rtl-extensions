@@ -66,11 +66,7 @@ export function queryHTMLElements({
   return filterHTMLElements(element.querySelectorAll(selector));
 }
 
-export function getParentList({
-  element,
-}: {
-  element: Element;
-}): Element | null {
+export function getParentList(element: Element): Element | null {
   return element.closest('ul, ol, dl');
 }
 
