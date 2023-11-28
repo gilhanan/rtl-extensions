@@ -9,20 +9,28 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
+        "compiler": "tsc",
+        "runtimeChunk": false,
         "outputPath": "dist/extensions/auto-rtl",
-        "index": "extensions/auto-rtl/src/index.html",
-        "baseHref": "/",
-        "main": "extensions/auto-rtl/src/main.tsx",
+        "index": "extensions/auto-rtl/src/popup/popup.html",
+        "main": "extensions/auto-rtl/src/popup/main.tsx",
         "tsConfig": "extensions/auto-rtl/tsconfig.app.json",
-        "assets": [
-          "extensions/auto-rtl/src/favicon.ico",
-          "extensions/auto-rtl/src/assets"
+        "additionalEntryPoints": [
+          {
+            "entryName": "content/content",
+            "entryPath": "extensions/auto-rtl/src/content/content.ts"
+          }
         ],
-        "styles": ["extensions/auto-rtl/src/styles.scss"],
+        "assets": [
+          "extensions/auto-rtl/src/manifest.json",
+          "extensions/auto-rtl/src/images",
+          "extensions/auto-rtl/src/_locales"
+        ],
+        "styles": ["libs/styles/src/styles.scss"],
         "scripts": [],
         "isolatedConfig": true,
-        "webpackConfig": "extensions/auto-rtl/webpack.config.js"
+        "webpackConfig": "extensions/auto-rtl/webpack.config.js",
+        "postcssConfig": "extensions/auto-rtl/postcss.config.js"
       },
       "configurations": {
         "development": {
@@ -39,7 +47,6 @@
             }
           ],
           "optimization": true,
-          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
