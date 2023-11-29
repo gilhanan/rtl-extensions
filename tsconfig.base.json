@@ -20,6 +20,7 @@
       "@rtl-extensions/dom": ["libs/dom/src/index.ts"],
       "@rtl-extensions/popup": ["libs/popup/src/index.ts"],
       "@rtl-extensions/rtl": ["libs/rtl/src/index.ts"],
+      "@rtl-extensions/shared": ["libs/shared/src/index.ts"],
       "@rtl-extensions/utils": ["libs/utils/src/index.ts"]
     }
   },
