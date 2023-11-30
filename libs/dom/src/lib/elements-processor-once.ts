@@ -1,9 +1,11 @@
-const processedElements = new WeakSet<Element>();
+import { getPresentedElements } from './dom';
+
+const processedElements = new WeakSet<HTMLElement>();
 
 export function processElementsOnce(
-  proccessFunction: (element: Element) => void
+  proccessFunction: (element: HTMLElement) => void
 ): void {
-  document.querySelectorAll('*').forEach((element) => {
+  getPresentedElements().forEach((element) => {
     if (!processedElements.has(element)) {
       proccessFunction(element);
       processedElements.add(element);

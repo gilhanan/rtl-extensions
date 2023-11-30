@@ -1,5 +1,14 @@
+import { Popup, PopupProps } from '@rtl-extensions/popup';
+
+const popupProps: PopupProps = {
+  brand: {
+    name: 'Auto',
+    url: '',
+  },
+};
+
 export function App() {
-  return <div></div>;
+  return <Popup {...popupProps} />;
 }
 
 export default App;

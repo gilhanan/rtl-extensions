@@ -1,4 +1,8 @@
-import { isHTMLListElement, toggleClass } from '@rtl-extensions/dom';
+import {
+  getPresentedElements,
+  isHTMLListElement,
+  toggleClass,
+} from '@rtl-extensions/dom';
 import { getRTLEnabledValue } from './rtl-enabled-storage';
 import { isRTLText } from './is-rtl-text';
 import { rtlListLayout, isListRTL } from './lists';
@@ -8,10 +12,14 @@ const RTL_CLASS = 'rtl';
 
 export function toggleRTLGlobal({ enabled }: { enabled: boolean }): void {
   toggleClass({
-    element: document.body,
+    element: document.documentElement,
     className: RTL_ENABLED_CLASS,
     enabled,
   });
+}
+
+export function enableRTLGlobal(): void {
+  toggleRTLGlobal({ enabled: true });
 }
 
 export async function tempDisableRTLGlobal(): Promise<{
@@ -53,15 +61,13 @@ export function isRTLApplicable(element: Element): boolean {
     return true;
   }
 
-  return Array.from(element.childNodes).some((childNode) => {
-    return (
-      childNode.nodeType === Node.TEXT_NODE && isRTLText(childNode.textContent)
-    );
+  return Array.from(element.childNodes).some(({ nodeType, textContent }) => {
+    return nodeType === Node.TEXT_NODE && isRTLText(textContent);
   });
 }
 
-export function queryAndAplyRTL({ element }: { element: Element }): void {
-  Array.from(element.querySelectorAll('*'))
+export function queryAndAplyRTL({ element }: { element: HTMLElement }): void {
+  getPresentedElements({ element })
     .concat(element)
     .filter(isRTLApplicable)
     .forEach(enableRTLElement);

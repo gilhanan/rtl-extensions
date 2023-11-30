@@ -4,25 +4,19 @@ import {
   injectCSS,
   listItemsTags,
   getListItems,
-  swapStyleValues,
   Styles,
+  computeStyle,
 } from '@rtl-extensions/dom';
 import { generateHash } from '@rtl-extensions/utils';
 import { isRTLText } from './is-rtl-text';
 import { RTL_ENABLED_CLASS, tempDisableRTLGlobal } from './toggle-rtl';
+import { swapIndentation } from './indentation';
 
 const transformsToClasses = new Map<string, string>();
 const appliedClasses = new Map<string, true>();
 
 function swapListIndentation({ list }: { list: Element }): void {
-  swapStyleValues({
-    element: list,
-    styleProps: [
-      ['paddingLeft', 'paddingRight'],
-      ['marginLeft', 'marginRight'],
-    ],
-    rule: (hashedClass) => `.${RTL_ENABLED_CLASS} .${hashedClass}`,
-  });
+  swapIndentation(list);
 }
 
 function swapListItemsIndentation({
@@ -70,7 +64,9 @@ function swapListItemsIndentation({
 function fillTransformsToClasses({ elements }: { elements: Element[] }): void {
   elements
     .map((element) => {
-      const { transform } = getComputedStyle(element, 'before');
+      const transform = computeStyle({ element, pseudoElt: 'before' }).get(
+        'transform'
+      );
 
       const matrix = new DOMMatrix(transform);
       matrix.e = -matrix.e;
@@ -121,7 +117,7 @@ export async function rtlListLayout({
 }): Promise<void> {
   const { restore } = await tempDisableRTLGlobal();
 
-  if (getComputedStyle(list).direction !== 'rtl') {
+  if (computeStyle({ element: list }).get('direction') !== 'rtl') {
     swapListIndentation({
       list,
     });

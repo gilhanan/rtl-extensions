@@ -2,7 +2,7 @@ import { camelCasetoKebabCase } from '@rtl-extensions/utils';
 import { StylePropsCamelCase, Styles } from './shared';
 import { injectCSSOnce } from './inject-css-once';
 
-function computeStyle({
+export function computeStyle({
   element,
   pseudoElt,
 }: {
@@ -26,13 +26,9 @@ function computeStyle({
 }
 
 export function getCSSText(styles: Styles): string {
-  const rules = document.createElement('span').style;
-
-  Object.entries(styles).forEach(([key, value]) => {
-    rules[key as StylePropsCamelCase] = value as string;
-  });
-
-  return rules.cssText;
+  return Object.entries(styles)
+    .map(([key, value]) => `${camelCasetoKebabCase(key)}: ${value} !important;`)
+    .join(' ');
 }
 
 export function getConsistStyles<T extends StylePropsCamelCase[]>({

@@ -58,27 +58,6 @@ describe('toggleClass', () => {
   });
 });
 
-describe('filterHTMLElements', () => {
-  it('should filter out non-HTMLElement nodes', () => {
-    const htmlList = [
-      document.createElement('div'),
-      document.createElement('span'),
-      document.createElement('p'),
-    ];
-
-    const additionalNodes = [
-      document.createTextNode('Text Node'),
-      document.createComment('Comment Node'),
-    ];
-
-    const nodeList = [...htmlList, ...additionalNodes] as unknown as NodeList;
-
-    const result = filterHTMLElements(nodeList);
-
-    expect(result).toStrictEqual(htmlList);
-  });
-});
-
 describe('queryHTMLElements', () => {
   it('should return an array of matching HTMLElements', () => {
     const foo = 'foo';

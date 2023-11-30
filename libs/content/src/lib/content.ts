@@ -2,6 +2,7 @@ import { throttleItems } from '@rtl-extensions/utils';
 import {
   addEventListenerOnce,
   getParentList,
+  getPresentedElements,
   isHTMLElement,
   isInputElement,
   observeChanges,
@@ -29,8 +30,8 @@ async function initRTLGlobalEnabled(): Promise<void> {
   });
 }
 
-function observeInputsElements({ element }: { element: Element }) {
-  Array.from(element.querySelectorAll('*'))
+function observeInputsElements({ element }: { element: HTMLElement }) {
+  getPresentedElements({ element })
     .concat(element)
     .filter(isInputElement)
     .forEach((element) => {
@@ -54,14 +55,14 @@ function observeInputsElements({ element }: { element: Element }) {
 }
 
 function observeDOMChanges() {
-  function callback(element: Element) {
+  function callback(element: HTMLElement) {
     queryAndAplyRTL({ element });
     observeInputsElements({ element });
   }
 
   callback(document.body);
 
-  const throttleProcessItems = throttleItems<Element>({
+  const throttleProcessItems = throttleItems<HTMLElement>({
     callback: (items) => items.forEach(callback),
     limitInMs: 1000,
   });

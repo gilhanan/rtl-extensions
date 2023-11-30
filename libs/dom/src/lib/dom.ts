@@ -1,4 +1,27 @@
+import { isLetter } from '@rtl-extensions/utils';
+
+interface QueryHTMLElements {
+  element?: Element;
+  selector?: string;
+}
+
 export const listItemsTags = ['li', 'dt', 'dd'];
+
+export function isTextNode(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE;
+}
+
+export function isHTMLNoScript(node: HTMLElement): boolean {
+  return node.tagName === 'NOSCRIPT';
+}
+
+export function isHTMLScriptElement(node: Node): node is HTMLScriptElement {
+  return node instanceof HTMLScriptElement;
+}
+
+export function isHTMLStyleElement(node: Node): node is HTMLStyleElement {
+  return node instanceof HTMLStyleElement;
+}
 
 export function isHTMLElement(node: Node | null): node is HTMLElement {
   return node instanceof HTMLElement;
@@ -52,18 +75,11 @@ export function toggleClass({
   }
 }
 
-export function filterHTMLElements(nodeList: NodeList): HTMLElement[] {
-  return Array.from(nodeList).filter(isHTMLElement);
-}
-
 export function queryHTMLElements({
-  element,
-  selector,
-}: {
-  element: HTMLElement;
-  selector: string;
-}): HTMLElement[] {
-  return filterHTMLElements(element.querySelectorAll(selector));
+  element = document.body,
+  selector = '*',
+}: QueryHTMLElements): HTMLElement[] {
+  return Array.from(element.querySelectorAll(selector)).filter(isHTMLElement);
 }
 
 export function getParentList(element: Element): Element | null {
@@ -81,5 +97,24 @@ export function isInputElement(element: Element): boolean {
 export function getListItems({ list }: { list: Element }): Element[] {
   return Array.from(list.children).filter(({ tagName }) =>
     listItemsTags.includes(tagName.toLowerCase())
+  );
+}
+
+export function getPresentedElements(
+  query: QueryHTMLElements = {}
+): HTMLElement[] {
+  return queryHTMLElements(query).filter(
+    (element) =>
+      !isHTMLScriptElement(element) &&
+      !isHTMLStyleElement(element) &&
+      !isHTMLNoScript(element)
+  );
+}
+
+export function getTextNodes(): HTMLElement[] {
+  return getPresentedElements().filter(({ childNodes }) =>
+    Array.from(childNodes).some(
+      (element) => isTextNode(element) && isLetter(element.textContent)
+    )
   );
 }
