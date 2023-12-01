@@ -104,11 +104,36 @@ function observeDOMChanges() {
   });
 }
 
+// TODO: Fix infinite loop
+function observeClassNamesChanges() {
+  const throttleProcessItems = throttleItems<HTMLElement>({
+    callback: fixLayout,
+    limitInMs: 5000,
+  });
+
+  observeChanges({
+    target: document.body,
+    options: {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    },
+    callback: (mutations) => {
+      throttleProcessItems(
+        mutations.map(({ target }) => target).filter(isHTMLElement)
+      );
+    },
+  });
+}
+
 if (shouldRTLBeEnabled()) {
   await initRTLGlobalEnabled();
   enableRTLElement(document.documentElement);
   observeDOMChanges();
+  observeClassNamesChanges();
 }
+
 //   initRTLGlobalEnabled();
 //   observeDOMChanges();
 //   observeTextContentsChanges();
