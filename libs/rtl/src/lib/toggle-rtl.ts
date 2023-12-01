@@ -38,7 +38,7 @@ export function applyRTLElement({
   element,
   enabled,
 }: {
-  element: Element;
+  element: HTMLElement;
   enabled: boolean;
 }): void {
   toggleClass({
@@ -52,11 +52,11 @@ export function applyRTLElement({
   }
 }
 
-export function enableRTLElement(element: Element): void {
+export function enableRTLElement(element: HTMLElement): void {
   applyRTLElement({ element, enabled: true });
 }
 
-export function isRTLApplicable(element: Element): boolean {
+export function isRTLApplicable(element: HTMLElement): boolean {
   if (isHTMLListElement(element) && isListRTL({ list: element })) {
     return true;
   }

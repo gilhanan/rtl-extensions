@@ -1,7 +1,7 @@
 import { computeStyle, swapStyleValues } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
-export function swapPositions(element: Element): void {
+export function swapPositions(element: HTMLElement): void {
   if (computeStyle({ element }).get('position') !== 'absolute') {
     return;
   }

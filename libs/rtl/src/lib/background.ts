@@ -15,8 +15,8 @@ function getZIndex(zIndex = ''): string {
   return '-1';
 }
 
-export function flipBackgroundImages(element: Element): void {
-  if (element.childElementCount === 0) {
+export function flipBackground(element: HTMLElement): void {
+  if (element.childElementCount === 0 || !element.innerText) {
     return;
   }
 

@@ -8,14 +8,14 @@ import {
 } from '@rtl-extensions/dom';
 import {
   enableRTLElement,
-  flipBackgroundImages,
+  flipBackground,
   getRTLEnabledValue,
   isRTLText,
   isToggleRTLGlobalMessage,
   swapBorders,
   swapFloat,
   swapIndentation,
-  // swapPositions,
+  swapPositions,
   tempDisableRTLGlobal,
   toggleRTLGlobal,
 } from '@rtl-extensions/rtl';
@@ -53,14 +53,18 @@ const distinctProccessedNodes = new Set<Node>();
 let proccessedNodes = 0;
 
 async function fixLayout(elements: HTMLElement[]) {
+  const rtlElements = elements.filter(
+    (element) => computeStyle({ element }).get('direction') === 'rtl'
+  );
+
   const { restore } = await tempDisableRTLGlobal();
 
-  elements.forEach((element) => {
+  rtlElements.forEach((element) => {
     swapIndentation(element);
     swapBorders(element);
-    // swapPositions(element);
-    flipBackgroundImages(element);
+    swapPositions(element);
     swapFloat(element);
+    flipBackground(element);
     proccessedNodes++;
     distinctProccessedNodes.add(element);
   });
@@ -100,9 +104,8 @@ function observeDOMChanges() {
   });
 }
 
-initRTLGlobalEnabled();
-
 if (shouldRTLBeEnabled()) {
+  await initRTLGlobalEnabled();
   enableRTLElement(document.documentElement);
   observeDOMChanges();
 }

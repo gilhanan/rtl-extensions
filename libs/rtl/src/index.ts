@@ -7,4 +7,4 @@ export * from './lib/indentation';
 export * from './lib/borders';
 export * from './lib/positions';
 export * from './lib/float';
-export * from './lib/background-images';
+export * from './lib/background';

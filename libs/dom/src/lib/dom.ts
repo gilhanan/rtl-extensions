@@ -94,10 +94,10 @@ export function isInputElement(element: Element): boolean {
   );
 }
 
-export function getListItems({ list }: { list: Element }): Element[] {
-  return Array.from(list.children).filter(({ tagName }) =>
-    listItemsTags.includes(tagName.toLowerCase())
-  );
+export function getListItems({ list }: { list: HTMLElement }): HTMLElement[] {
+  return Array.from(list.children)
+    .filter(isHTMLElement)
+    .filter(({ tagName }) => listItemsTags.includes(tagName.toLowerCase()));
 }
 
 export function getPresentedElements(

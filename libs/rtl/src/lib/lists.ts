@@ -23,7 +23,7 @@ function swapListItemsIndentation({
   list,
   pseudoElt,
 }: {
-  list: Element;
+  list: HTMLElement;
   pseudoElt?: 'before';
 }): void {
   const margins = ['marginLeft', 'marginRight'] as const;
@@ -85,7 +85,7 @@ function fillTransformsToClasses({ elements }: { elements: Element[] }): void {
     });
 }
 
-function swapListItemsMarkersTransform({ list }: { list: Element }) {
+function swapListItemsMarkersTransform({ list }: { list: HTMLElement }) {
   fillTransformsToClasses({
     elements: getListItems({ list }),
   });
@@ -104,16 +104,14 @@ function swapListItemsMarkersTransform({ list }: { list: Element }) {
   });
 }
 
-export function isListRTL({ list }: { list: Element }): boolean {
-  return getListItems({ list }).every(({ textContent }) =>
-    isRTLText(textContent)
-  );
+export function isListRTL({ list }: { list: HTMLElement }): boolean {
+  return getListItems({ list }).every(({ innerText }) => isRTLText(innerText));
 }
 
 export async function rtlListLayout({
   list,
 }: {
-  list: Element;
+  list: HTMLElement;
 }): Promise<void> {
   const { restore } = await tempDisableRTLGlobal();
 
