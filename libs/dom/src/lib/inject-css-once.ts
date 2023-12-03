@@ -12,7 +12,7 @@ export function injectCSSOnce({
   element: Element;
   rule: (className: string) => string;
   styles: Styles;
-}): void {
+}): string | undefined {
   if (!Object.keys(styles).length) {
     return;
   }
@@ -26,7 +26,7 @@ export function injectCSSOnce({
   if (existingClass) {
     element.classList.add(existingClass);
 
-    return;
+    return existingClass;
   }
 
   const hashedClass = generateHash();
@@ -39,4 +39,6 @@ export function injectCSSOnce({
   });
 
   cssToClass.set(css, hashedClass);
+
+  return hashedClass;
 }

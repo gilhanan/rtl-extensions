@@ -49,10 +49,13 @@ function shouldRTLBeEnabled(): boolean {
   return rtlTextNodes.length > 25 && rtlPercentage > 0.05;
 }
 
-const distinctProccessedNodes = new Set<Node>();
-let proccessedNodes = 0;
+const elementsToRTLClasses = new WeakMap<HTMLElement, string[]>();
 
 async function fixLayout(elements: HTMLElement[]) {
+  if (!elements.length) {
+    return;
+  }
+
   const rtlElements = elements.filter(
     (element) => computeStyle({ element }).get('direction') === 'rtl'
   );
@@ -60,17 +63,21 @@ async function fixLayout(elements: HTMLElement[]) {
   const { restore } = await tempDisableRTLGlobal();
 
   rtlElements.forEach((element) => {
-    swapIndentation(element);
-    swapBorders(element);
-    swapPositions(element);
-    swapFloat(element);
-    flipBackground(element);
-    proccessedNodes++;
-    distinctProccessedNodes.add(element);
-  });
+    const classNames = [
+      swapIndentation,
+      swapBorders,
+      swapPositions,
+      swapFloat,
+      flipBackground,
+    ]
+      .map((fn) => fn(element))
+      .flat()
+      .filter(Boolean) as string[];
 
-  console.log('proccessedNodes', proccessedNodes);
-  console.log('distinctProccessedNodes', distinctProccessedNodes.size);
+    if (classNames.length) {
+      elementsToRTLClasses.set(element, classNames);
+    }
+  });
 
   restore();
 }
@@ -104,11 +111,10 @@ function observeDOMChanges() {
   });
 }
 
-// TODO: Fix infinite loop
 function observeClassNamesChanges() {
   const throttleProcessItems = throttleItems<HTMLElement>({
     callback: fixLayout,
-    limitInMs: 5000,
+    limitInMs: 100,
   });
 
   observeChanges({
@@ -121,7 +127,14 @@ function observeClassNamesChanges() {
     },
     callback: (mutations) => {
       throttleProcessItems(
-        mutations.map(({ target }) => target).filter(isHTMLElement)
+        mutations
+          .map(({ target }) => target)
+          .filter(isHTMLElement)
+          .filter((element) =>
+            elementsToRTLClasses
+              .get(element)
+              ?.some((className) => !element.classList.contains(className))
+          )
       );
     },
   });

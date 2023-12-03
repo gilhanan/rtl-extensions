@@ -15,9 +15,9 @@ function getZIndex(zIndex = ''): string {
   return '-1';
 }
 
-export function flipBackground(element: HTMLElement): void {
+export function flipBackground(element: HTMLElement): string[] {
   if (element.childElementCount === 0 || !element.innerText) {
-    return;
+    return [];
   }
 
   const computedStyle = computeStyle({ element });
@@ -25,35 +25,36 @@ export function flipBackground(element: HTMLElement): void {
   const backgroundImage = computedStyle.get('backgroundImage');
 
   if (!backgroundImage?.startsWith('url')) {
-    return;
+    return [];
   }
 
   const background = computedStyle.get('background');
   const position = computedStyle.get('position');
   const zIndex = computedStyle.get('zIndex');
 
-  injectCSSOnce({
-    element,
-    rule: (className) => `.${RTL_ENABLED_CLASS} .${className}`,
-    styles: {
-      background: 'none',
-      position: position === 'static' ? 'relative' : position,
-    },
-  });
-
-  injectCSSOnce({
-    element,
-    rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:before`,
-    styles: {
-      content: '""',
-      background,
-      position: 'absolute',
-      top: '0',
-      right: '0',
-      bottom: '0',
-      left: '0',
-      zIndex: getZIndex(zIndex),
-      transform: 'scaleX(-1)',
-    },
-  });
+  return [
+    injectCSSOnce({
+      element,
+      rule: (className) => `.${RTL_ENABLED_CLASS} .${className}`,
+      styles: {
+        background: 'none',
+        position: position === 'static' ? 'relative' : position,
+      },
+    }),
+    injectCSSOnce({
+      element,
+      rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:before`,
+      styles: {
+        content: '""',
+        background,
+        position: 'absolute',
+        top: '0',
+        right: '0',
+        bottom: '0',
+        left: '0',
+        zIndex: getZIndex(zIndex),
+        transform: 'scaleX(-1)',
+      },
+    }),
+  ].filter(Boolean) as string[];
 }

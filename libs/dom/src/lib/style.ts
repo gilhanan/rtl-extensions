@@ -94,7 +94,7 @@ export function swapStyleValues({
   element: Element;
   styleProps: [StylePropsCamelCase, StylePropsCamelCase][];
   rule: (className: string) => string;
-}): void {
+}): string | undefined {
   const computedStyles = computeStyle({ element });
 
   const styles: Styles = Object.fromEntries(
@@ -112,7 +112,7 @@ export function swapStyleValues({
       ])
   );
 
-  injectCSSOnce({
+  return injectCSSOnce({
     element,
     rule,
     styles,
