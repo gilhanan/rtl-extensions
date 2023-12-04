@@ -108,12 +108,8 @@ export function isListRTL({ list }: { list: HTMLElement }): boolean {
   return getListItems({ list }).every(({ innerText }) => isRTLText(innerText));
 }
 
-export async function rtlListLayout({
-  list,
-}: {
-  list: HTMLElement;
-}): Promise<void> {
-  const { restore } = await tempDisableRTLGlobal();
+export function rtlListLayout({ list }: { list: HTMLElement }): void {
+  const { restore } = tempDisableRTLGlobal();
 
   if (computeStyle({ element: list }).get('direction') !== 'rtl') {
     swapListIndentation({

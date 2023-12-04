@@ -1,4 +1,5 @@
 export type StylePropsKebabCase =
+  | 'text-align'
   | 'z-index'
   | 'content'
   | 'background-image'
@@ -23,6 +24,7 @@ export type StylePropsKebabCase =
   | 'transform';
 
 export type StylePropsCamelCase = Extract<
+  | 'textAlign'
   | 'zIndex'
   | 'content'
   | 'backgroundImage'
@@ -52,6 +54,7 @@ export const styleKebabToCamel: Record<
   StylePropsKebabCase,
   StylePropsCamelCase
 > = {
+  'text-align': 'textAlign',
   'z-index': 'zIndex',
   content: 'content',
   'background-image': 'backgroundImage',
@@ -80,6 +83,7 @@ export const styleCamelToKebab: Record<
   StylePropsCamelCase,
   StylePropsKebabCase
 > = {
+  textAlign: 'text-align',
   zIndex: 'z-index',
   content: 'content',
   backgroundImage: 'background-image',

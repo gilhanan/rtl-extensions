@@ -1,4 +1,6 @@
 import { isLetter } from '@rtl-extensions/utils';
+import { computeStyle } from './style';
+import { StylePropsCamelCase } from './shared';
 
 interface QueryHTMLElements {
   element?: Element;
@@ -117,4 +119,32 @@ export function getTextNodes(): HTMLElement[] {
       (element) => isTextNode(element) && isLetter(element.textContent)
     )
   );
+}
+
+export function queryParents({
+  element,
+  property,
+  value,
+}: {
+  element: HTMLElement;
+  property: StylePropsCamelCase;
+  value: string;
+}): HTMLElement | undefined {
+  let current: HTMLElement = element;
+
+  while (current?.parentElement) {
+    const { parentElement }: HTMLElement = current;
+
+    const parentValue = computeStyle({
+      element: parentElement,
+    }).get(property);
+
+    if (parentValue === value) {
+      return current;
+    }
+
+    current = parentElement;
+  }
+
+  return;
 }

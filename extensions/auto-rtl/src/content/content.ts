@@ -8,6 +8,7 @@ import {
 } from '@rtl-extensions/dom';
 import {
   enableRTLElement,
+  fixTextAlign,
   flipBackground,
   getRTLEnabledValue,
   isRTLText,
@@ -20,6 +21,8 @@ import {
   toggleRTLGlobal,
 } from '@rtl-extensions/rtl';
 import { throttleItems } from '@rtl-extensions/utils';
+
+const { documentElement } = document;
 
 async function initRTLGlobalEnabled(): Promise<void> {
   const enabled = await getRTLEnabledValue();
@@ -51,7 +54,7 @@ function shouldRTLBeEnabled(): boolean {
 
 const elementsToRTLClasses = new WeakMap<HTMLElement, string[]>();
 
-async function fixLayout(elements: HTMLElement[]) {
+function fixLayout(elements: HTMLElement[]) {
   if (!elements.length) {
     return;
   }
@@ -60,7 +63,7 @@ async function fixLayout(elements: HTMLElement[]) {
     (element) => computeStyle({ element }).get('direction') === 'rtl'
   );
 
-  const { restore } = await tempDisableRTLGlobal();
+  const { restore } = tempDisableRTLGlobal();
 
   rtlElements.forEach((element) => {
     const classNames = [
@@ -140,13 +143,19 @@ function observeClassNamesChanges() {
   });
 }
 
-if (shouldRTLBeEnabled()) {
+let isInitialized = false;
+
+setInterval(async () => {
+  if (isInitialized) {
+    return;
+  }
+  if (!shouldRTLBeEnabled()) {
+    return;
+  }
+  isInitialized = true;
   await initRTLGlobalEnabled();
-  enableRTLElement(document.documentElement);
+  enableRTLElement(documentElement);
+  fixTextAlign(documentElement);
   observeDOMChanges();
   observeClassNamesChanges();
-}
-
-//   initRTLGlobalEnabled();
-//   observeDOMChanges();
-//   observeTextContentsChanges();
+}, 500);

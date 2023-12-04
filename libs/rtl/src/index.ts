@@ -8,3 +8,4 @@ export * from './lib/borders';
 export * from './lib/positions';
 export * from './lib/float';
 export * from './lib/background';
+export * from './lib/textAlign';

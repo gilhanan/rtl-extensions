@@ -3,16 +3,17 @@ import {
   isHTMLListElement,
   toggleClass,
 } from '@rtl-extensions/dom';
-import { getRTLEnabledValue } from './rtl-enabled-storage';
 import { isRTLText } from './is-rtl-text';
 import { rtlListLayout, isListRTL } from './lists';
 
 export const RTL_ENABLED_CLASS = 'rtl-enabled';
 const RTL_CLASS = 'rtl';
 
+const { documentElement } = document;
+
 export function toggleRTLGlobal({ enabled }: { enabled: boolean }): void {
   toggleClass({
-    element: document.documentElement,
+    element: documentElement,
     className: RTL_ENABLED_CLASS,
     enabled,
   });
@@ -22,10 +23,10 @@ export function enableRTLGlobal(): void {
   toggleRTLGlobal({ enabled: true });
 }
 
-export async function tempDisableRTLGlobal(): Promise<{
+export function tempDisableRTLGlobal(): {
   restore: () => void;
-}> {
-  const enabled = await getRTLEnabledValue();
+} {
+  const enabled = documentElement.classList.contains(RTL_ENABLED_CLASS);
 
   toggleRTLGlobal({ enabled: false });
 
