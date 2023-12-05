@@ -118,7 +118,7 @@ function observeDOMChanges() {
           .map(({ addedNodes }) =>
             Array.from(addedNodes)
               .filter(isHTMLElement)
-              .map((element) => getPresentedElements({ element }))
+              .map((element) => [element, ...getPresentedElements({ element })])
               .flat()
           )
           .flat()
