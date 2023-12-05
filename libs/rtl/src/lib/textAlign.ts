@@ -2,8 +2,10 @@ import { computeStyle, injectCSSOnce } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
 export function fixTextAlign(element: Element): void {
-  if (computeStyle({ element }).get('direction') === 'rtl') {
-    const textAlign = computeStyle({ element }).get('textAlign');
+  const computedStyle = computeStyle({ element });
+
+  if (computedStyle.get('direction') === 'rtl') {
+    const textAlign = computedStyle.get('textAlign');
 
     if (textAlign === 'left') {
       injectCSSOnce({
