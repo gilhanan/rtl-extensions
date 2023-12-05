@@ -5,9 +5,7 @@ export function fixTextAlign(element: Element): void {
   const computedStyle = computeStyle({ element });
 
   if (computedStyle.get('direction') === 'rtl') {
-    const textAlign = computedStyle.get('textAlign');
-
-    if (textAlign === 'left') {
+    if (computedStyle.get('textAlign') === 'left') {
       injectCSSOnce({
         element,
         rule: (className) => `.${RTL_ENABLED_CLASS} .${className}`,
