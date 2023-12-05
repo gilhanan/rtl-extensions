@@ -103,7 +103,7 @@ function observeDOMChanges() {
 
   const throttleProcessItems = throttleItems<HTMLElement>({
     callback: fixLayout,
-    limitInMs: 100,
+    limitInMs: 50,
   });
 
   observeChanges({
@@ -130,7 +130,7 @@ function observeDOMChanges() {
 function observeClassNamesChanges() {
   const throttleProcessItems = throttleItems<HTMLElement>({
     callback: fixLayout,
-    limitInMs: 100,
+    limitInMs: 50,
   });
 
   observeChanges({
