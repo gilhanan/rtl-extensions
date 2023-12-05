@@ -148,3 +148,41 @@ export function queryParents({
 
   return;
 }
+
+function isAncestor({
+  ancestor,
+  element,
+}: {
+  ancestor: HTMLElement;
+  element: HTMLElement;
+}): boolean {
+  let current: HTMLElement | null = element;
+  while (current) {
+    if (current === ancestor) {
+      return true;
+    }
+    current = current.parentElement;
+  }
+  return false;
+}
+
+export function findCommonAncestor(elements: HTMLElement[]): HTMLElement {
+  const remainingElements = new Set(elements);
+
+  let ancestor: HTMLElement | null = elements[0];
+  while (ancestor) {
+    remainingElements.forEach((element) => {
+      if (!isAncestor({ ancestor: ancestor as HTMLElement, element })) {
+        remainingElements.delete(element);
+      }
+    });
+
+    if (remainingElements.size === 0) {
+      return ancestor;
+    }
+
+    ancestor = ancestor.parentElement;
+  }
+
+  return document.documentElement;
+}

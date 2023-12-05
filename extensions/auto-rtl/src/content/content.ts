@@ -1,6 +1,7 @@
 import './content.scss';
 import {
   computeStyle,
+  findCommonAncestor,
   getPresentedElements,
   getTextNodes,
   isHTMLElement,
@@ -52,6 +53,25 @@ function shouldRTLBeEnabled(): boolean {
   return rtlTextNodes.length > 25 && rtlPercentage > 0.05;
 }
 
+function fixInheritedLayout(element: HTMLElement) {
+  fixTextAlign(element);
+}
+
+function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
+  const classNames = [
+    swapIndentation,
+    swapBorders,
+    swapPositions,
+    swapFloat,
+    flipBackground,
+  ]
+    .map((fn) => fn(element))
+    .flat()
+    .filter(Boolean) as string[];
+
+  return { classNames };
+}
+
 const elementsToRTLClasses = new WeakMap<HTMLElement, string[]>();
 
 function fixLayout(elements: HTMLElement[]) {
@@ -63,19 +83,12 @@ function fixLayout(elements: HTMLElement[]) {
     (element) => computeStyle({ element }).get('direction') === 'rtl'
   );
 
+  fixInheritedLayout(findCommonAncestor(rtlElements));
+
   const { restore } = tempDisableRTLGlobal();
 
   rtlElements.forEach((element) => {
-    const classNames = [
-      swapIndentation,
-      swapBorders,
-      swapPositions,
-      swapFloat,
-      flipBackground,
-    ]
-      .map((fn) => fn(element))
-      .flat()
-      .filter(Boolean) as string[];
+    const { classNames } = fixNonInheritedLayout(element);
 
     if (classNames.length) {
       elementsToRTLClasses.set(element, classNames);
@@ -155,7 +168,7 @@ setInterval(async () => {
   isInitialized = true;
   await initRTLGlobalEnabled();
   enableRTLElement(documentElement);
-  fixTextAlign(documentElement);
+  fixInheritedLayout(documentElement);
   observeDOMChanges();
   observeClassNamesChanges();
 }, 500);
