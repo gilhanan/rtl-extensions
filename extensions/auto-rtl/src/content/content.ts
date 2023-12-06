@@ -18,6 +18,7 @@ import {
   swapFloat,
   swapIndentation,
   swapPositions,
+  swapTransform,
   tempDisableRTLGlobal,
   toggleRTLGlobal,
 } from '@rtl-extensions/rtl';
@@ -62,6 +63,7 @@ function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
     swapIndentation,
     swapBorders,
     swapPositions,
+    swapTransform,
     swapFloat,
     flipBackground,
   ]
