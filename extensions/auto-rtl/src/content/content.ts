@@ -103,10 +103,14 @@ function fixLayout(elements: HTMLElement[]) {
   const { restore } = tempDisableRTLGlobal();
 
   rtlElements.forEach((element) => {
-    const { classNames } = fixNonInheritedLayout(element);
+    try {
+      const { classNames } = fixNonInheritedLayout(element);
 
-    if (classNames.length) {
-      elementsToRTLClasses.set(element, classNames);
+      if (classNames.length) {
+        elementsToRTLClasses.set(element, classNames);
+      }
+    } catch (error) {
+      // Telemetry
     }
   });
 
