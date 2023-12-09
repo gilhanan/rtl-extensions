@@ -59,17 +59,28 @@ function fixInheritedLayout(element: HTMLElement) {
 }
 
 function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
+  const pseudoElt = 'before';
   const computedStyle = computeStyle({ element });
+  const pseudoComputedStyle = computeStyle({ element, pseudoElt });
 
-  const classNames = [
+  const functions = [
     swapIndentation,
     swapBorders,
     swapPositions,
     swapTransform,
     swapFloat,
     flipBackground,
-  ]
-    .map((fn) => fn({ element, computedStyle }))
+  ];
+
+  const nonPseudoClasses = functions.map((fn) =>
+    fn({ element, computedStyle })
+  );
+
+  const pseudoClasses = functions.map((fn) =>
+    fn({ element, computedStyle: pseudoComputedStyle, pseudoElt })
+  );
+
+  const classNames = [...nonPseudoClasses, ...pseudoClasses]
     .flat()
     .filter(Boolean) as string[];
 

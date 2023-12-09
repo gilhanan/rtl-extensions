@@ -4,9 +4,11 @@ import { RTL_ENABLED_CLASS } from './toggle-rtl';
 export function swapTransform({
   element,
   computedStyle,
+  pseudoElt,
 }: {
   element: HTMLElement;
   computedStyle: ComputedStyle;
+  pseudoElt?: string;
 }): string | undefined {
   const transform = computedStyle.get('transform');
 
@@ -20,7 +22,8 @@ export function swapTransform({
 
   return injectCSSOnce({
     element,
-    rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:before`,
+    rule: (className) =>
+      `.${RTL_ENABLED_CLASS} .${className}${pseudoElt ? `:${pseudoElt}` : ''}`,
     styles: {
       transform: matrix.toString(),
     },

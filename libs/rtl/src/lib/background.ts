@@ -4,9 +4,11 @@ import { RTL_ENABLED_CLASS } from './toggle-rtl';
 export function flipBackground({
   element,
   computedStyle,
+  pseudoElt,
 }: {
   element: HTMLElement;
   computedStyle: ComputedStyle;
+  pseudoElt?: string;
 }): string[] {
   if (element.childElementCount === 0 || !element.innerText) {
     return [];
@@ -20,6 +22,18 @@ export function flipBackground({
 
   const background = computedStyle.get('background');
   const position = computedStyle.get('position');
+
+  if (pseudoElt) {
+    return [
+      injectCSSOnce({
+        element,
+        rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:${pseudoElt}`,
+        styles: {
+          transform: 'scaleX(-1)',
+        },
+      }),
+    ].filter(Boolean) as string[];
+  }
 
   return [
     injectCSSOnce({
