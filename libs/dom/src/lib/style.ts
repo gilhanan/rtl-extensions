@@ -2,13 +2,17 @@ import { camelCasetoKebabCase } from '@rtl-extensions/utils';
 import { StylePropsCamelCase, Styles } from './shared';
 import { injectCSSOnce } from './inject-css-once';
 
+export interface ComputedStyle {
+  get(prop: StylePropsCamelCase): string | undefined;
+}
+
 export function computeStyle({
   element,
   pseudoElt,
 }: {
   element: Element;
   pseudoElt?: string;
-}) {
+}): ComputedStyle {
   const styles = pseudoElt
     ? getComputedStyle(element, pseudoElt)
     : element.computedStyleMap();
@@ -88,22 +92,22 @@ export function injectCSS({
 
 export function swapStyleValues({
   element,
+  computedStyle,
   styleProps,
   rule,
 }: {
   element: Element;
+  computedStyle: ComputedStyle;
   styleProps: [StylePropsCamelCase, StylePropsCamelCase][];
   rule: (className: string) => string;
 }): string | undefined {
-  const computedStyles = computeStyle({ element });
-
   const styles: Styles = Object.fromEntries(
     styleProps
       .map(([prop1, prop2]) => ({
         prop1,
         prop2,
-        value1: computedStyles.get(prop1) || '0px',
-        value2: computedStyles.get(prop2) || '0px',
+        value1: computedStyle.get(prop1) || '0px',
+        value2: computedStyle.get(prop2) || '0px',
       }))
       .filter(({ value1, value2 }) => value1 !== value2)
       .flatMap(({ prop1, prop2, value1, value2 }) => [

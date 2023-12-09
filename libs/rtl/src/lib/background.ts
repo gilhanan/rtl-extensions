@@ -1,12 +1,16 @@
-import { computeStyle, injectCSSOnce } from '@rtl-extensions/dom';
+import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
-export function flipBackground(element: HTMLElement): string[] {
+export function flipBackground({
+  element,
+  computedStyle,
+}: {
+  element: HTMLElement;
+  computedStyle: ComputedStyle;
+}): string[] {
   if (element.childElementCount === 0 || !element.innerText) {
     return [];
   }
-
-  const computedStyle = computeStyle({ element });
 
   const backgroundImage = computedStyle.get('backgroundImage');
 

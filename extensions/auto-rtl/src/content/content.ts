@@ -59,6 +59,8 @@ function fixInheritedLayout(element: HTMLElement) {
 }
 
 function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
+  const computedStyle = computeStyle({ element });
+
   const classNames = [
     swapIndentation,
     swapBorders,
@@ -67,7 +69,7 @@ function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
     swapFloat,
     flipBackground,
   ]
-    .map((fn) => fn(element))
+    .map((fn) => fn({ element, computedStyle }))
     .flat()
     .filter(Boolean) as string[];
 

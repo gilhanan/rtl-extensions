@@ -1,9 +1,16 @@
-import { swapStyleValues } from '@rtl-extensions/dom';
+import { ComputedStyle, swapStyleValues } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
-export function swapBorders(element: Element): string | undefined {
+export function swapBorders({
+  element,
+  computedStyle,
+}: {
+  element: HTMLElement;
+  computedStyle: ComputedStyle;
+}): string | undefined {
   return swapStyleValues({
     element,
+    computedStyle,
     styleProps: [
       ['borderLeft', 'borderRight'],
       ['borderTopRightRadius', 'borderTopLeftRadius'],

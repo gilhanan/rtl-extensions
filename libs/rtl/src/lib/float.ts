@@ -1,8 +1,14 @@
-import { computeStyle, injectCSSOnce } from '@rtl-extensions/dom';
+import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
-export function swapFloat(element: Element): string | undefined {
-  const float = computeStyle({ element }).get('float');
+export function swapFloat({
+  element,
+  computedStyle,
+}: {
+  element: HTMLElement;
+  computedStyle: ComputedStyle;
+}): string | undefined {
+  const float = computedStyle.get('float');
 
   if (float !== 'left' && float !== 'right') {
     return;

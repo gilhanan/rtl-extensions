@@ -1,8 +1,14 @@
-import { computeStyle, injectCSSOnce } from '@rtl-extensions/dom';
+import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
 import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
-export function swapTransform(element: Element): string | undefined {
-  const transform = computeStyle({ element }).get('transform');
+export function swapTransform({
+  element,
+  computedStyle,
+}: {
+  element: HTMLElement;
+  computedStyle: ComputedStyle;
+}): string | undefined {
+  const transform = computedStyle.get('transform');
 
   const matrix = new DOMMatrix(transform);
 
