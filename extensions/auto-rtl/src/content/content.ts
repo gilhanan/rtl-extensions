@@ -1,5 +1,6 @@
 import './content.scss';
 import {
+  ComputedStyle,
   computeStyle,
   findCommonAncestor,
   getPresentedElements,
@@ -58,9 +59,14 @@ function fixInheritedLayout(element: HTMLElement) {
   fixTextAlign(element);
 }
 
-function fixNonInheritedLayout(element: HTMLElement): { classNames: string[] } {
+function fixNonInheritedLayout({
+  element,
+  computedStyle,
+}: {
+  element: HTMLElement;
+  computedStyle: ComputedStyle;
+}): { classNames: string[] } {
   const pseudoElt = 'before';
-  const computedStyle = computeStyle({ element });
   const pseudoComputedStyle = computeStyle({ element, pseudoElt });
 
   const functions = [
@@ -94,17 +100,22 @@ function fixLayout(elements: HTMLElement[]) {
     return;
   }
 
-  const rtlElements = elements.filter(
-    (element) => computeStyle({ element }).get('direction') === 'rtl'
-  );
+  const rtlElements = elements
+    .map((element) => ({
+      element,
+      computedStyle: computeStyle({ element }),
+    }))
+    .filter(({ computedStyle }) => computedStyle.get('direction') === 'rtl');
 
-  fixInheritedLayout(findCommonAncestor(rtlElements));
+  fixInheritedLayout(
+    findCommonAncestor(rtlElements.map(({ element }) => element))
+  );
 
   const { restore } = tempDisableRTLGlobal();
 
-  rtlElements.forEach((element) => {
+  rtlElements.forEach(({ element, computedStyle }) => {
     try {
-      const { classNames } = fixNonInheritedLayout(element);
+      const { classNames } = fixNonInheritedLayout({ element, computedStyle });
 
       if (classNames.length) {
         elementsToRTLClasses.set(element, classNames);
