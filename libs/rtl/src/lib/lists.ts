@@ -15,8 +15,11 @@ import { swapIndentation } from './indentation';
 const transformsToClasses = new Map<string, string>();
 const appliedClasses = new Map<string, true>();
 
-function swapListIndentation({ list }: { list: Element }): void {
-  swapIndentation(list);
+function swapListIndentation({ list }: { list: HTMLElement }): void {
+  swapIndentation({
+    element: list,
+    computedStyle: computeStyle({ element: list }),
+  });
 }
 
 function swapListItemsIndentation({
