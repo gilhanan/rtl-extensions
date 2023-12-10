@@ -6,8 +6,8 @@ import {
 import { isRTLText } from './is-rtl-text';
 import { rtlListLayout, isListRTL } from './lists';
 
-export const RTL_ENABLED_CLASS = 'rtl-enabled';
-const RTL_CLASS = 'rtl';
+export const RTL_ENABLED_CLASS = 'auto-dir-enabled';
+const RTL_CLASS = 'auto-dir-rtl';
 
 const { documentElement } = document;
 

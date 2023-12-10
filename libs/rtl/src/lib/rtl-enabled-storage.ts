@@ -1,6 +1,6 @@
 import { getValue, setValue } from '@rtl-extensions/chrome';
 
-export const RTL_ENABLED_KEY = 'rtl-enabled';
+export const RTL_ENABLED_KEY = 'auto-dir-enabled';
 
 export async function getRTLEnabledValue(): Promise<boolean> {
   const value = await getValue<string>({ key: RTL_ENABLED_KEY });

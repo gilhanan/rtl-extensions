@@ -1,4 +1,9 @@
-.rtl-enabled {
+.auto-dir-enabled {
+  &.ltr,
+  .ltr {
+    direction: ltr !important;
+  }
+
   &.rtl,
   .rtl {
     direction: rtl !important;
