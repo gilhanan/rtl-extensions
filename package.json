@@ -6,7 +6,7 @@
     "build": "nx run-many --target=build --all",
     "chatgpt:watch": "nx build chatgpt --configuration=development --watch",
     "claude:watch": "nx build claude --configuration=development --watch",
-    "auto-rtl:watch": "nx build auto-rtl --configuration=development --watch"
+    "auto-dir:watch": "nx build auto-dir --configuration=development --watch"
   },
   "private": true,
   "devDependencies": {

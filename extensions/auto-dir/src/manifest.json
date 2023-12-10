@@ -1,5 +1,5 @@
 {
-  "name": "Auto RTL",
+  "name": "Auto Direction",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "manifest_version": 3,

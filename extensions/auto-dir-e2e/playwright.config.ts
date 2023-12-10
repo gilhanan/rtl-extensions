@@ -25,7 +25,7 @@ export default defineConfig({
   },
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx nx serve auto-rtl',
+    command: 'npx nx serve auto-dir',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
     cwd: workspaceRoot,

@@ -1,7 +1,7 @@
 {
-  "name": "auto-rtl",
+  "name": "auto-dir",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "extensions/auto-rtl/src",
+  "sourceRoot": "extensions/auto-dir/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -11,26 +11,26 @@
       "options": {
         "compiler": "tsc",
         "runtimeChunk": false,
-        "outputPath": "dist/extensions/auto-rtl",
-        "index": "extensions/auto-rtl/src/popup/popup.html",
-        "main": "extensions/auto-rtl/src/popup/main.tsx",
-        "tsConfig": "extensions/auto-rtl/tsconfig.app.json",
+        "outputPath": "dist/extensions/auto-dir",
+        "index": "extensions/auto-dir/src/popup/popup.html",
+        "main": "extensions/auto-dir/src/popup/main.tsx",
+        "tsConfig": "extensions/auto-dir/tsconfig.app.json",
         "additionalEntryPoints": [
           {
             "entryName": "content/content",
-            "entryPath": "extensions/auto-rtl/src/content/content.ts"
+            "entryPath": "extensions/auto-dir/src/content/content.ts"
           }
         ],
         "assets": [
-          "extensions/auto-rtl/src/manifest.json",
-          "extensions/auto-rtl/src/images",
-          "extensions/auto-rtl/src/_locales"
+          "extensions/auto-dir/src/manifest.json",
+          "extensions/auto-dir/src/images",
+          "extensions/auto-dir/src/_locales"
         ],
         "styles": ["libs/styles/src/styles.scss"],
         "scripts": [],
         "isolatedConfig": true,
-        "webpackConfig": "extensions/auto-rtl/webpack.config.js",
-        "postcssConfig": "extensions/auto-rtl/postcss.config.js"
+        "webpackConfig": "extensions/auto-dir/webpack.config.js",
+        "postcssConfig": "extensions/auto-dir/postcss.config.js"
       },
       "configurations": {
         "development": {
@@ -42,8 +42,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "extensions/auto-rtl/src/environments/environment.ts",
-              "with": "extensions/auto-rtl/src/environments/environment.prod.ts"
+              "replace": "extensions/auto-dir/src/environments/environment.ts",
+              "with": "extensions/auto-dir/src/environments/environment.prod.ts"
             }
           ],
           "optimization": true,
@@ -58,15 +58,15 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "auto-rtl:build",
+        "buildTarget": "auto-dir:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "auto-rtl:build:development"
+          "buildTarget": "auto-dir:build:development"
         },
         "production": {
-          "buildTarget": "auto-rtl:build:production",
+          "buildTarget": "auto-dir:build:production",
           "hmr": false
         }
       }
@@ -75,14 +75,14 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["extensions/auto-rtl/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["extensions/auto-dir/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "extensions/auto-rtl/jest.config.ts",
+        "jestConfig": "extensions/auto-dir/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
