@@ -1,7 +1,5 @@
 import {
-  injectCSSOnce,
   getConsistStyles,
-  injectCSS,
   listItemsTags,
   getListItems,
   Styles,
@@ -9,8 +7,9 @@ import {
 } from '@rtl-extensions/dom';
 import { generateHash } from '@rtl-extensions/utils';
 import { isRTLText } from './is-rtl-text';
-import { RTL_ENABLED_CLASS, tempDisableRTLGlobal } from './toggle-rtl';
+import { tempDisableRTLGlobal } from './toggle-rtl';
 import { swapIndentation } from './indentation';
+import { injectCSSOnceWrapper, injectCSSWrapper } from './style';
 
 const transformsToClasses = new Map<string, string>();
 const appliedClasses = new Map<string, true>();
@@ -49,15 +48,12 @@ function swapListItemsIndentation({
       .flat()
   );
 
-  injectCSSOnce({
+  injectCSSOnceWrapper({
     element: list,
     rule: (hashedClass) =>
       listItemsTags
         .map(
-          (tag) =>
-            `.${RTL_ENABLED_CLASS} .${hashedClass} > ${tag}${
-              pseudoElt ? `:${pseudoElt}` : ''
-            }`
+          (tag) => `.${hashedClass} > ${tag}${pseudoElt ? `:${pseudoElt}` : ''}`
         )
         .join(', '),
     styles,
@@ -97,8 +93,8 @@ function swapListItemsMarkersTransform({ list }: { list: HTMLElement }) {
     if (appliedClasses.get(hashedClass)) {
       return;
     }
-    injectCSS({
-      rule: `.${RTL_ENABLED_CLASS} .${hashedClass}:before`,
+    injectCSSWrapper({
+      rule: `.${hashedClass}:before`,
       styles: {
         transform,
       },

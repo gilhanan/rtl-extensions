@@ -1,5 +1,5 @@
-import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
+import { ComputedStyle } from '@rtl-extensions/dom';
+import { injectCSSOnceWrapper } from './style';
 
 export function swapFloat({
   element,
@@ -16,10 +16,9 @@ export function swapFloat({
     return;
   }
 
-  return injectCSSOnce({
+  return injectCSSOnceWrapper({
     element,
-    rule: (className) =>
-      `.${RTL_ENABLED_CLASS} .${className}${pseudoElt ? `:${pseudoElt}` : ''}`,
+    rule: (className) => `.${className}${pseudoElt ? `:${pseudoElt}` : ''}`,
     styles: {
       float: float === 'left' ? 'inline-start' : 'inline-end',
     },

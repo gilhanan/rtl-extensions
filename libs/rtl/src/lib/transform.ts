@@ -1,5 +1,5 @@
-import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
+import { ComputedStyle } from '@rtl-extensions/dom';
+import { injectCSSOnceWrapper } from './style';
 
 export function swapTransform({
   element,
@@ -20,10 +20,9 @@ export function swapTransform({
 
   matrix.e = -matrix.e;
 
-  return injectCSSOnce({
+  return injectCSSOnceWrapper({
     element,
-    rule: (className) =>
-      `.${RTL_ENABLED_CLASS} .${className}${pseudoElt ? `:${pseudoElt}` : ''}`,
+    rule: (className) => `.${className}${pseudoElt ? `:${pseudoElt}` : ''}`,
     styles: {
       transform: matrix.toString(),
     },

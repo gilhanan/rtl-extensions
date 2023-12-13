@@ -1,5 +1,4 @@
 import { ComputedStyle, swapStyleValues } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
 export function swapBorders({
   element,
@@ -18,9 +17,6 @@ export function swapBorders({
       ['borderTopRightRadius', 'borderTopLeftRadius'],
       ['borderBottomRightRadius', 'borderBottomLeftRadius'],
     ],
-    rule: (hashedClass) =>
-      `.${RTL_ENABLED_CLASS} .${hashedClass}${
-        pseudoElt ? `:${pseudoElt}` : ''
-      }`,
+    rule: (hashedClass) => `.${hashedClass}${pseudoElt ? `:${pseudoElt}` : ''}`,
   });
 }

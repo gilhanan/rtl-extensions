@@ -1,5 +1,5 @@
-import { ComputedStyle, injectCSSOnce } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
+import { ComputedStyle } from '@rtl-extensions/dom';
+import { injectCSSOnceWrapper } from './style';
 
 export function flipBackground({
   element,
@@ -25,9 +25,9 @@ export function flipBackground({
 
   if (pseudoElt) {
     return [
-      injectCSSOnce({
+      injectCSSOnceWrapper({
         element,
-        rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:${pseudoElt}`,
+        rule: (className) => `.${className}:${pseudoElt}`,
         styles: {
           transform: 'scaleX(-1)',
         },
@@ -36,18 +36,18 @@ export function flipBackground({
   }
 
   return [
-    injectCSSOnce({
+    injectCSSOnceWrapper({
       element,
-      rule: (className) => `.${RTL_ENABLED_CLASS} .${className}`,
+      rule: (className) => `.${className}`,
       styles: {
         background: 'none',
         zIndex: '0',
         ...(position === 'static' ? { position: 'relative' } : {}),
       },
     }),
-    injectCSSOnce({
+    injectCSSOnceWrapper({
       element,
-      rule: (className) => `.${RTL_ENABLED_CLASS} .${className}:before`,
+      rule: (className) => `.${className}:before`,
       styles: {
         content: '""',
         background,

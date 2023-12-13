@@ -6,7 +6,7 @@ import {
 import { isRTLText } from './is-rtl-text';
 import { rtlListLayout, isListRTL } from './lists';
 
-export const RTL_ENABLED_CLASS = 'auto-dir-enabled';
+export const AUTO_DIR_ENABLED_CLASS = 'auto-dir-enabled';
 const RTL_CLASS = 'auto-dir-rtl';
 
 const { documentElement } = document;
@@ -14,7 +14,7 @@ const { documentElement } = document;
 export function toggleRTLGlobal({ enabled }: { enabled: boolean }): void {
   toggleClass({
     element: documentElement,
-    className: RTL_ENABLED_CLASS,
+    className: AUTO_DIR_ENABLED_CLASS,
     enabled,
   });
 }
@@ -26,7 +26,7 @@ export function enableRTLGlobal(): void {
 export function tempDisableRTLGlobal(): {
   restore: () => void;
 } {
-  const enabled = documentElement.classList.contains(RTL_ENABLED_CLASS);
+  const enabled = documentElement.classList.contains(AUTO_DIR_ENABLED_CLASS);
 
   toggleRTLGlobal({ enabled: false });
 

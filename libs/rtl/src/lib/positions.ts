@@ -3,7 +3,6 @@ import {
   computeStyle,
   swapStyleValues,
 } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
 
 export function swapPositions({
   element,
@@ -23,7 +22,7 @@ export function swapPositions({
     computedStyle,
     styleProps: [['left', 'right']],
     rule: (hashedClass) =>
-      `.${RTL_ENABLED_CLASS} .${hashedClass}${
+      `.${hashedClass}${
         pseudoElt ? `:${pseudoElt}` : ''
       }`,
   });

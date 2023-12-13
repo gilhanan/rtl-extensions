@@ -1,14 +1,14 @@
-import { computeStyle, injectCSSOnce } from '@rtl-extensions/dom';
-import { RTL_ENABLED_CLASS } from './toggle-rtl';
+import { computeStyle } from '@rtl-extensions/dom';
+import { injectCSSOnceWrapper } from './style';
 
 export function fixTextAlign(element: Element): void {
   const computedStyle = computeStyle({ element });
 
   if (computedStyle.get('direction') === 'rtl') {
     if (computedStyle.get('textAlign') === 'left') {
-      injectCSSOnce({
+      injectCSSOnceWrapper({
         element,
-        rule: (className) => `.${RTL_ENABLED_CLASS} .${className}`,
+        rule: (className) => `.${className}`,
         styles: {
           textAlign: 'start',
         },
