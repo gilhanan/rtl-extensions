@@ -1,5 +1,5 @@
 import {
-  getPresentedElements,
+  getPresentedNestedChildren,
   isHTMLListElement,
   toggleClass,
 } from '@rtl-extensions/dom';
@@ -7,7 +7,7 @@ import { isRTLText } from './is-rtl-text';
 import { rtlListLayout, isListRTL } from './lists';
 
 export const AUTO_DIR_ENABLED_CLASS = 'auto-dir-enabled';
-const RTL_CLASS = 'auto-dir-rtl';
+export const AUTO_DIR_RTL_CLASS = 'auto-dir-rtl';
 
 const { documentElement } = document;
 
@@ -35,6 +35,10 @@ export function tempDisableRTLGlobal(): {
   };
 }
 
+export function isElementRTL(element: HTMLElement): boolean {
+  return element.classList.contains(AUTO_DIR_RTL_CLASS);
+}
+
 export function applyRTLElement({
   element,
   enabled,
@@ -44,7 +48,7 @@ export function applyRTLElement({
 }): void {
   toggleClass({
     element,
-    className: RTL_CLASS,
+    className: AUTO_DIR_RTL_CLASS,
     enabled,
   });
 
@@ -62,13 +66,14 @@ export function isRTLApplicable(element: HTMLElement): boolean {
     return true;
   }
 
-  return Array.from(element.childNodes).some(({ nodeType, textContent }) => {
-    return nodeType === Node.TEXT_NODE && isRTLText(textContent);
-  });
+  return Array.from(element.childNodes).some(
+    ({ nodeType, textContent }) =>
+      nodeType === Node.TEXT_NODE && isRTLText(textContent)
+  );
 }
 
 export function queryAndAplyRTL({ element }: { element: HTMLElement }): void {
-  getPresentedElements({ element })
+  getPresentedNestedChildren(element)
     .concat(element)
     .filter(isRTLApplicable)
     .forEach(enableRTLElement);

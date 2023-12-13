@@ -1,8 +1,5 @@
-import {
-  ComputedStyle,
-  computeStyle,
-  swapStyleValues,
-} from '@rtl-extensions/dom';
+import { ComputedStyle, computeStyle } from '@rtl-extensions/dom';
+import { swapStyleValues } from './style';
 
 export function swapPositions({
   element,
@@ -21,9 +18,6 @@ export function swapPositions({
     element,
     computedStyle,
     styleProps: [['left', 'right']],
-    rule: (hashedClass) =>
-      `.${hashedClass}${
-        pseudoElt ? `:${pseudoElt}` : ''
-      }`,
+    rule: (hashedClass) => `.${hashedClass}${pseudoElt ? `:${pseudoElt}` : ''}`,
   });
 }

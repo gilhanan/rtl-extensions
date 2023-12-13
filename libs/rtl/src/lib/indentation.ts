@@ -1,4 +1,5 @@
-import { ComputedStyle, swapStyleValues } from '@rtl-extensions/dom';
+import { ComputedStyle } from '@rtl-extensions/dom';
+import { swapStyleValues } from './style';
 
 export function swapIndentation({
   element,
@@ -16,9 +17,6 @@ export function swapIndentation({
       ['paddingLeft', 'paddingRight'],
       ['marginLeft', 'marginRight'],
     ],
-    rule: (hashedClass) =>
-      `.${hashedClass}${
-        pseudoElt ? `:${pseudoElt}` : ''
-      }`,
+    rule: (hashedClass) => `.${hashedClass}${pseudoElt ? `:${pseudoElt}` : ''}`,
   });
 }

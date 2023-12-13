@@ -1,18 +1,20 @@
 import './content.scss';
 import {
   ComputedStyle,
+  calculateScore,
   computeStyle,
   findCommonAncestor,
-  getPresentedElements,
-  getTextNodes,
+  getPresentedNestedChildren,
   isHTMLElement,
+  isLetterNode,
   observeChanges,
 } from '@rtl-extensions/dom';
 import {
-  enableRTLElement,
+  applyRTLElement,
   fixTextAlign,
   flipBackground,
   getRTLEnabledValue,
+  isElementRTL,
   isRTLText,
   isToggleRTLGlobalMessage,
   swapBorders,
@@ -25,7 +27,7 @@ import {
 } from '@rtl-extensions/rtl';
 import { throttleItems } from '@rtl-extensions/utils';
 
-const { documentElement } = document;
+const { documentElement, body } = document;
 
 async function initRTLGlobalEnabled(): Promise<void> {
   const enabled = await getRTLEnabledValue();
@@ -40,19 +42,17 @@ async function initRTLGlobalEnabled(): Promise<void> {
 }
 
 function shouldRTLBeEnabled(): boolean {
-  if (computeStyle({ element: document.body }).get('direction') === 'rtl') {
+  if (!isRTLText(body.innerText)) {
     return false;
   }
 
-  const textNodes = getTextNodes();
+  const score = calculateScore({
+    node: body,
+    isRelevant: (node) => isLetterNode(node),
+    isScored: ({ textContent }) => isRTLText(textContent),
+  });
 
-  const rtlTextNodes = textNodes.filter(({ textContent }) =>
-    isRTLText(textContent)
-  );
-
-  const rtlPercentage = rtlTextNodes.length / textNodes.length;
-
-  return rtlTextNodes.length > 25 && rtlPercentage > 0.05;
+  return score > 0.5;
 }
 
 function fixInheritedLayout(element: HTMLElement) {
@@ -129,15 +129,13 @@ function fixLayout(elements: HTMLElement[]) {
 }
 
 function observeDOMChanges() {
-  fixLayout(getPresentedElements());
-
   const throttleProcessItems = throttleItems<HTMLElement>({
     callback: fixLayout,
     limitInMs: 50,
   });
 
   observeChanges({
-    target: document.body,
+    target: body,
     options: {
       subtree: true,
       childList: true,
@@ -148,7 +146,7 @@ function observeDOMChanges() {
           .map(({ addedNodes }) =>
             Array.from(addedNodes)
               .filter(isHTMLElement)
-              .map((element) => [element, ...getPresentedElements({ element })])
+              .map((element) => [element, ...getPresentedNestedChildren(element)])
               .flat()
           )
           .flat()
@@ -164,7 +162,7 @@ function observeClassNamesChanges() {
   });
 
   observeChanges({
-    target: document.body,
+    target: body,
     options: {
       subtree: true,
       childList: true,
@@ -188,18 +186,17 @@ function observeClassNamesChanges() {
 
 await initRTLGlobalEnabled();
 
-let isInitialized = false;
+observeDOMChanges();
+observeClassNamesChanges();
 
 setInterval(() => {
-  if (isInitialized) {
+  const previous = isElementRTL(documentElement);
+  const current = shouldRTLBeEnabled();
+
+  if (previous === current) {
     return;
   }
-  if (!shouldRTLBeEnabled()) {
-    return;
-  }
-  isInitialized = true;
-  enableRTLElement(documentElement);
-  fixInheritedLayout(documentElement);
-  observeDOMChanges();
-  observeClassNamesChanges();
-}, 500);
+
+  applyRTLElement({ element: documentElement, enabled: current });
+  fixLayout(getPresentedNestedChildren());
+}, 2000);

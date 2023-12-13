@@ -2,7 +2,7 @@ import { throttleItems } from '@rtl-extensions/utils';
 import {
   addEventListenerOnce,
   getParentList,
-  getPresentedElements,
+  getPresentedNestedChildren,
   isHTMLElement,
   isInputElement,
   observeChanges,
@@ -31,7 +31,7 @@ async function initRTLGlobalEnabled(): Promise<void> {
 }
 
 function observeInputsElements({ element }: { element: HTMLElement }) {
-  getPresentedElements({ element })
+  getPresentedNestedChildren(element)
     .concat(element)
     .filter(isInputElement)
     .forEach((element) => {

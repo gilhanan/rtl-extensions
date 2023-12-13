@@ -1,11 +1,11 @@
 .auto-dir-enabled {
-  &.ltr,
-  .ltr {
+  &.auto-dir-ltr,
+  .auto-dir-ltr {
     direction: ltr !important;
   }
 
-  &.rtl,
-  .rtl {
+  &.auto-dir-rtl,
+  .auto-dir-rtl {
     direction: rtl !important;
   }
 }

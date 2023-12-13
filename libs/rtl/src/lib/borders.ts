@@ -1,4 +1,5 @@
-import { ComputedStyle, swapStyleValues } from '@rtl-extensions/dom';
+import { ComputedStyle } from '@rtl-extensions/dom';
+import { swapStyleValues } from './style';
 
 export function swapBorders({
   element,
