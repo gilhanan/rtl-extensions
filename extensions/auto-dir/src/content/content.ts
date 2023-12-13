@@ -186,9 +186,11 @@ function observeClassNamesChanges() {
   });
 }
 
+await initRTLGlobalEnabled();
+
 let isInitialized = false;
 
-setInterval(async () => {
+setInterval(() => {
   if (isInitialized) {
     return;
   }
@@ -196,7 +198,6 @@ setInterval(async () => {
     return;
   }
   isInitialized = true;
-  await initRTLGlobalEnabled();
   enableRTLElement(documentElement);
   fixInheritedLayout(documentElement);
   observeDOMChanges();
