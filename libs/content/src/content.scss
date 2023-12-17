@@ -2,10 +2,18 @@
   &.auto-dir-ltr,
   .auto-dir-ltr {
     direction: ltr !important;
+
+    body {
+      direction: ltr !important;
+    }
   }
 
   &.auto-dir-rtl,
   .auto-dir-rtl {
     direction: rtl !important;
+
+    body {
+      direction: rtl !important;
+    }
   }
 }
