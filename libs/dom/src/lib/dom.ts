@@ -118,34 +118,6 @@ export function isLetterNode(node: Node): boolean {
   return isTextNode(node) && isLetter(node.textContent);
 }
 
-export function queryParents({
-  element,
-  property,
-  value,
-}: {
-  element: HTMLElement;
-  property: StylePropsCamelCase;
-  value: string;
-}): HTMLElement | undefined {
-  let current: HTMLElement = element;
-
-  while (current?.parentElement) {
-    const { parentElement }: HTMLElement = current;
-
-    const parentValue = computeStyle({
-      element: parentElement,
-    }).get(property);
-
-    if (parentValue === value) {
-      return current;
-    }
-
-    current = parentElement;
-  }
-
-  return;
-}
-
 function isAncestor({
   ancestor,
   element,

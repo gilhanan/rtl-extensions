@@ -1,6 +1,30 @@
 import { ComputedStyle, computeStyle } from '@rtl-extensions/dom';
 import { swapStyleValues } from './style';
 
+function isRelativeParent(element: HTMLElement): boolean {
+  return !!(
+    computeStyle({
+      element,
+    }).get('position') === 'relative' && element.offsetHeight
+  );
+}
+
+export function getRelativeParent(
+  element: HTMLElement
+): HTMLElement | undefined {
+  let currentParent = element.parentElement;
+
+  while (currentParent) {
+    if (isRelativeParent(currentParent)) {
+      return currentParent;
+    }
+
+    currentParent = currentParent.parentElement;
+  }
+
+  return;
+}
+
 export function swapPositions({
   element,
   computedStyle,
@@ -11,6 +35,12 @@ export function swapPositions({
   pseudoElt?: string;
 }): string | undefined {
   if (computeStyle({ element }).get('position') !== 'absolute') {
+    return;
+  }
+
+  const relativeParent = getRelativeParent(element);
+
+  if (!relativeParent) {
     return;
   }
 
