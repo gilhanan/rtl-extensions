@@ -2,8 +2,8 @@ import { toggleClass } from '@rtl-extensions/dom';
 import { Direction } from '@rtl-extensions/shared';
 
 export const AUTO_DIR_ENABLED_CLASS = 'auto-dir-enabled';
-export const AUTO_DIR_RTL_CLASS = 'auto-dir-rtl';
-export const AUTO_DIR_LTR_CLASS = 'auto-dir-ltr';
+const AUTO_DIR_RTL_CLASS = 'auto-dir-rtl';
+const AUTO_DIR_LTR_CLASS = 'auto-dir-ltr';
 
 const { documentElement } = document;
 
