@@ -5,23 +5,30 @@ import {
   injectCSS,
   injectCSSOnce,
 } from '@rtl-extensions/dom';
-import { AUTO_DIR_ENABLED_CLASS, AUTO_DIR_RTL_CLASS } from './toggle-rtl';
+import {
+  AUTO_DIR_ENABLED_CLASS,
+  AUTO_DIR_LTR_CLASS,
+  AUTO_DIR_RTL_CLASS,
+} from './toggle';
 
-const baseRule = `.${AUTO_DIR_ENABLED_CLASS}.${AUTO_DIR_RTL_CLASS}`;
+const baseRuleRTL = `.${AUTO_DIR_ENABLED_CLASS}.${AUTO_DIR_RTL_CLASS}`;
+const baseRuleLTR = `.${AUTO_DIR_ENABLED_CLASS}.${AUTO_DIR_LTR_CLASS}`;
 
-export const injectCSSOnceWrapper: typeof injectCSSOnce = (params) => {
-  return injectCSSOnce({
+function wrapRule(rule: string): string {
+  return `${baseRuleLTR} ${rule}, ${baseRuleRTL} ${rule}`;
+}
+
+export const injectCSSOnceWrapper: typeof injectCSSOnce = (params) =>
+  injectCSSOnce({
     ...params,
-    rule: (...args) => `${baseRule} ${params.rule(...args)}`,
+    rule: (...args) => wrapRule(params.rule(...args)),
   });
-};
 
-export const injectCSSWrapper: typeof injectCSS = (params) => {
-  return injectCSS({
+export const injectCSSWrapper: typeof injectCSS = (params) =>
+  injectCSS({
     ...params,
-    rule: `${baseRule} ${params.rule}`,
+    rule: wrapRule(params.rule),
   });
-};
 
 export function swapStyleValues({
   element,

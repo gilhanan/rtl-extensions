@@ -2,7 +2,7 @@ export * from './lib/lists';
 export * from './lib/is-rtl-text';
 export * from './lib/rtl-enabled-storage';
 export * from './lib/toggle-rtl-message';
-export * from './lib/toggle-rtl';
+export * from './lib/toggle';
 export * from './lib/indentation';
 export * from './lib/borders';
 export * from './lib/positions';

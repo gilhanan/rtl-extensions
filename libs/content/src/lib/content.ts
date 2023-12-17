@@ -13,7 +13,7 @@ import {
   getRTLEnabledValue,
   isToggleRTLGlobalMessage,
   isRTLText,
-  toggleRTLGlobal,
+  toggleGlobalDirection,
   toggleRTLElement,
   rtlListLayout,
   isListRTL,
@@ -21,12 +21,12 @@ import {
 
 async function initRTLGlobalEnabled(): Promise<void> {
   const enabled = await getRTLEnabledValue();
-  toggleRTLGlobal({ enabled });
+  toggleGlobalDirection({ enabled });
 
   chrome.runtime.onMessage.addListener((message) => {
     if (isToggleRTLGlobalMessage(message)) {
       const { enabled } = message;
-      toggleRTLGlobal({ enabled });
+      toggleGlobalDirection({ enabled });
     }
   });
 }

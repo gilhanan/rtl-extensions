@@ -10,11 +10,10 @@ import {
   observeChanges,
 } from '@rtl-extensions/dom';
 import {
-  toggleRTLElement,
   fixTextAlign,
   flipBackground,
   getRTLEnabledValue,
-  isRTLGlobalEnabled,
+  getGlobalDirection,
   isRTLText,
   isToggleRTLGlobalMessage,
   swapBorders,
@@ -22,43 +21,56 @@ import {
   swapIndentation,
   swapPositions,
   swapTransform,
-  tempDisableRTLGlobal,
-  toggleRTLGlobal,
+  toggleGlobalDirection,
+  executeDirectionDisabled,
+  setGlobalDirection,
+  clearGlobalDirection,
 } from '@rtl-extensions/rtl';
+import { Direction } from '@rtl-extensions/shared';
 import { throttleItems } from '@rtl-extensions/utils';
 
-const { documentElement, body } = document;
+const { body } = document;
+
+const bodyDirection = computeStyle({ element: body }).get('direction');
 
 async function initRTLGlobalEnabled(): Promise<void> {
   const enabled = await getRTLEnabledValue();
-  toggleRTLGlobal({ enabled });
+  toggleGlobalDirection({ enabled });
 
   chrome.runtime.onMessage.addListener((message) => {
     if (isToggleRTLGlobalMessage(message)) {
       const { enabled } = message;
-      toggleRTLGlobal({ enabled });
+      toggleGlobalDirection({ enabled });
     }
   });
 }
 
-function shouldRTLBeEnabled(): boolean {
+function getExpectedDirection(): Direction {
   const rtlScore = calculateScore({
     node: body,
     isRelevant: (node) => isLetterNode(node),
     isScored: ({ textContent }) => isRTLText(textContent),
   });
 
-  const direction = computeStyle({ element: body }).get('direction');
-
-  if (direction === 'rtl') {
-    return rtlScore > 0.8;
+  if (bodyDirection === 'ltr' && rtlScore > 0.8) {
+    return 'rtl';
   }
 
-  return rtlScore < 0.2;
+  if (bodyDirection === 'rtl' && rtlScore < 0.1) {
+    return 'ltr';
+  }
+
+  return null;
 }
 
-function fixInheritedLayout(element: HTMLElement) {
-  fixTextAlign(element);
+function fixInheritedLayout({
+  element,
+  direction,
+}: {
+  element: HTMLElement;
+  direction: Direction;
+}) {
+  fixTextAlign({ element, direction });
 }
 
 function fixNonInheritedLayout({
@@ -102,32 +114,38 @@ function fixLayout(elements: HTMLElement[]) {
     return;
   }
 
-  const rtlElements = elements
+  const direction = getGlobalDirection();
+
+  const fixableElements = elements
     .map((element) => ({
       element,
       computedStyle: computeStyle({ element }),
     }))
-    .filter(({ computedStyle }) => computedStyle.get('direction') === 'rtl');
+    .filter(
+      ({ computedStyle }) => computedStyle.get('direction') === direction
+    );
 
-  fixInheritedLayout(
-    findCommonAncestor(rtlElements.map(({ element }) => element))
-  );
-
-  const { restore } = tempDisableRTLGlobal();
-
-  rtlElements.forEach(({ element, computedStyle }) => {
-    try {
-      const { classNames } = fixNonInheritedLayout({ element, computedStyle });
-
-      if (classNames.length) {
-        elementsToRTLClasses.set(element, classNames);
-      }
-    } catch (error) {
-      // Telemetry
-    }
+  fixInheritedLayout({
+    element: findCommonAncestor(fixableElements.map(({ element }) => element)),
+    direction,
   });
 
-  restore();
+  executeDirectionDisabled(() => {
+    fixableElements.forEach(({ element, computedStyle }) => {
+      try {
+        const { classNames } = fixNonInheritedLayout({
+          element,
+          computedStyle,
+        });
+
+        if (classNames.length) {
+          elementsToRTLClasses.set(element, classNames);
+        }
+      } catch (error) {
+        // Telemetry
+      }
+    });
+  });
 }
 
 function observeDOMChanges() {
@@ -195,13 +213,17 @@ observeDOMChanges();
 observeClassNamesChanges();
 
 setInterval(() => {
-  const previous = isRTLGlobalEnabled();
-  const current = shouldRTLBeEnabled();
+  const expectedDirection = getExpectedDirection();
+  const actualDirection = getGlobalDirection();
 
-  if (previous === current) {
+  if (!expectedDirection) {
+    clearGlobalDirection();
+  }
+
+  if (actualDirection === expectedDirection) {
     return;
   }
 
-  toggleRTLElement({ element: documentElement, enabled: current });
+  setGlobalDirection(expectedDirection);
   fixLayout(getPresentedNestedChildren());
 }, 2000);

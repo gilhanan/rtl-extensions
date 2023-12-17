@@ -7,7 +7,7 @@ import {
 } from '@rtl-extensions/dom';
 import { generateHash } from '@rtl-extensions/utils';
 import { isRTLText } from './is-rtl-text';
-import { tempDisableRTLGlobal } from './toggle-rtl';
+import { executeDirectionDisabled } from './toggle';
 import { swapIndentation } from './indentation';
 import { injectCSSOnceWrapper, injectCSSWrapper } from './style';
 
@@ -108,23 +108,21 @@ export function isListRTL({ list }: { list: HTMLElement }): boolean {
 }
 
 export function rtlListLayout({ list }: { list: HTMLElement }): void {
-  const { restore } = tempDisableRTLGlobal();
-
-  if (computeStyle({ element: list }).get('direction') !== 'rtl') {
-    swapListIndentation({
-      list,
-    });
-    swapListItemsIndentation({
-      list,
-    });
-    swapListItemsIndentation({
-      list,
-      pseudoElt: 'before',
-    });
-    swapListItemsMarkersTransform({
-      list,
-    });
-  }
-
-  restore();
+  executeDirectionDisabled(() => {
+    if (computeStyle({ element: list }).get('direction') !== 'rtl') {
+      swapListIndentation({
+        list,
+      });
+      swapListItemsIndentation({
+        list,
+      });
+      swapListItemsIndentation({
+        list,
+        pseudoElt: 'before',
+      });
+      swapListItemsMarkersTransform({
+        list,
+      });
+    }
+  });
 }
