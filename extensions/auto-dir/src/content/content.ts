@@ -21,6 +21,7 @@ import {
   swapIndentation,
   swapPositions,
   swapTransform,
+  swapArrows,
   runOnDisabledFunctionality,
   setGlobalDirection,
   clearGlobalDirection,
@@ -89,6 +90,7 @@ function fixNonInheritedLayout({
     swapTransform,
     swapFloat,
     flipBackground,
+    swapArrows,
   ];
 
   const nonPseudoClasses = functions.map((fn) =>
