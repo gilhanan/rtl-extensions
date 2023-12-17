@@ -1,6 +1,5 @@
 import { camelCasetoKebabCase } from '@rtl-extensions/utils';
 import { StylePropsCamelCase, Styles } from './shared';
-import { injectCSSOnce } from './inject-css-once';
 
 export interface ComputedStyle {
   get(prop: StylePropsCamelCase): string | undefined;

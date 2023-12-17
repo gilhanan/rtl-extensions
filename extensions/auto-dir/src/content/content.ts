@@ -42,17 +42,19 @@ async function initRTLGlobalEnabled(): Promise<void> {
 }
 
 function shouldRTLBeEnabled(): boolean {
-  if (!isRTLText(body.innerText)) {
-    return false;
-  }
-
-  const score = calculateScore({
+  const rtlScore = calculateScore({
     node: body,
     isRelevant: (node) => isLetterNode(node),
     isScored: ({ textContent }) => isRTLText(textContent),
   });
 
-  return score > 0.5;
+  const direction = computeStyle({ element: body }).get('direction');
+
+  if (direction === 'rtl') {
+    return rtlScore > 0.8;
+  }
+
+  return rtlScore < 0.2;
 }
 
 function fixInheritedLayout(element: HTMLElement) {
