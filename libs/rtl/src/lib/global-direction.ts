@@ -1,31 +1,10 @@
 import { toggleClass } from '@rtl-extensions/dom';
 import { Direction } from '@rtl-extensions/shared';
 
-export const AUTO_DIR_ENABLED_CLASS = 'auto-dir-enabled';
 const AUTO_DIR_RTL_CLASS = 'auto-dir-rtl';
 const AUTO_DIR_LTR_CLASS = 'auto-dir-ltr';
 
 const { documentElement } = document;
-
-export function toggleGlobalDirection({ enabled }: { enabled: boolean }): void {
-  toggleClass({
-    element: documentElement,
-    className: AUTO_DIR_ENABLED_CLASS,
-    enabled,
-  });
-}
-
-export function executeDirectionDisabled<T>(callback: () => T): T {
-  const enabled = documentElement.classList.contains(AUTO_DIR_ENABLED_CLASS);
-
-  documentElement.classList.remove(AUTO_DIR_ENABLED_CLASS);
-
-  const result = callback();
-
-  toggleGlobalDirection({ enabled });
-
-  return result;
-}
 
 export function clearGlobalDirection(): void {
   documentElement.classList.remove(AUTO_DIR_RTL_CLASS);

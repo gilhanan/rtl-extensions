@@ -5,10 +5,10 @@ import {
   injectCSS,
   injectCSSOnce,
 } from '@rtl-extensions/dom';
-import { AUTO_DIR_ENABLED_CLASS } from './toggle';
+import { FUNCTIONALITY_CLASS } from './functionality';
 
 function wrapRule(rule: string): string {
-  return `.${AUTO_DIR_ENABLED_CLASS} ${rule}`;
+  return `.${FUNCTIONALITY_CLASS} ${rule}`;
 }
 
 export const injectCSSOnceWrapper: typeof injectCSSOnce = (params) =>

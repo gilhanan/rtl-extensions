@@ -12,19 +12,20 @@ import {
 import {
   fixTextAlign,
   flipBackground,
-  getRTLEnabledValue,
+  getFunctionalityAbilityValue,
   getGlobalDirection,
   isRTLText,
-  isToggleRTLGlobalMessage,
+  isFunctionalityAbilityMessage,
   swapBorders,
   swapFloat,
   swapIndentation,
   swapPositions,
   swapTransform,
-  toggleGlobalDirection,
-  executeDirectionDisabled,
+  runOnDisabledFunctionality,
   setGlobalDirection,
   clearGlobalDirection,
+  disableFunctionality,
+  enableFunctionality,
 } from '@rtl-extensions/rtl';
 import { Direction } from '@rtl-extensions/shared';
 import { throttleItems } from '@rtl-extensions/utils';
@@ -33,17 +34,15 @@ const { body } = document;
 
 const bodyDirection = computeStyle({ element: body }).get('direction');
 
-async function initRTLGlobalEnabled(): Promise<void> {
-  const enabled = await getRTLEnabledValue();
-  toggleGlobalDirection({ enabled });
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (isToggleRTLGlobalMessage(message)) {
-      const { enabled } = message;
-      toggleGlobalDirection({ enabled });
+let isFunctionalityEnabled = await getFunctionalityAbilityValue();
+chrome.runtime.onMessage.addListener((message) => {
+  if (isFunctionalityAbilityMessage(message)) {
+    isFunctionalityEnabled = message.enabled;
+    if (!isFunctionalityEnabled) {
+      disableFunctionality();
     }
-  });
-}
+  }
+});
 
 function getExpectedDirection(): Direction {
   const rtlScore = calculateScore({
@@ -130,7 +129,7 @@ function fixLayout(elements: HTMLElement[]) {
     direction,
   });
 
-  executeDirectionDisabled(() => {
+  runOnDisabledFunctionality(() => {
     fixableElements.forEach(({ element, computedStyle }) => {
       try {
         const { classNames } = fixNonInheritedLayout({
@@ -207,12 +206,14 @@ function observeClassNamesChanges() {
   });
 }
 
-await initRTLGlobalEnabled();
-
 observeDOMChanges();
 observeClassNamesChanges();
 
 setInterval(() => {
+  if (!isFunctionalityEnabled) {
+    return;
+  }
+
   const expectedDirection = getExpectedDirection();
   const actualDirection = getGlobalDirection();
 
@@ -224,6 +225,7 @@ setInterval(() => {
     return;
   }
 
+  enableFunctionality();
   setGlobalDirection(expectedDirection);
   fixLayout(getPresentedNestedChildren());
 }, 2000);

@@ -10,23 +10,23 @@ import {
   observeChangesOnce,
 } from '@rtl-extensions/dom';
 import {
-  getRTLEnabledValue,
-  isToggleRTLGlobalMessage,
+  getFunctionalityAbilityValue,
+  isFunctionalityAbilityMessage,
   isRTLText,
-  toggleGlobalDirection,
+  toggleFunctionality,
   toggleRTLElement,
   rtlListLayout,
   isListRTL,
 } from '@rtl-extensions/rtl';
 
 async function initRTLGlobalEnabled(): Promise<void> {
-  const enabled = await getRTLEnabledValue();
-  toggleGlobalDirection({ enabled });
+  const enabled = await getFunctionalityAbilityValue();
+  toggleFunctionality({ enabled });
 
   chrome.runtime.onMessage.addListener((message) => {
-    if (isToggleRTLGlobalMessage(message)) {
+    if (isFunctionalityAbilityMessage(message)) {
       const { enabled } = message;
-      toggleGlobalDirection({ enabled });
+      toggleFunctionality({ enabled });
     }
   });
 }

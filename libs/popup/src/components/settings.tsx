@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-  getRTLEnabledValue,
-  sendToggleRTLGlobalMessage,
-  setRTLEnabledValue,
+  getFunctionalityAbilityValue,
+  sendFunctionalityAbilityMessage,
+  setFunctionalityAbilityValue,
 } from '@rtl-extensions/rtl';
 import { Select } from './select';
 
@@ -11,14 +11,14 @@ export function Settings() {
   const [enabled, setEnabled] = useState(false);
 
   async function loadSettings() {
-    setEnabled(await getRTLEnabledValue());
+    setEnabled(await getFunctionalityAbilityValue());
     setLoading(false);
   }
 
   function onEnabledChange(enabled: boolean) {
-    setRTLEnabledValue(enabled);
+    setFunctionalityAbilityValue(enabled);
     setEnabled(enabled);
-    sendToggleRTLGlobalMessage(enabled);
+    sendFunctionalityAbilityMessage(enabled);
   }
 
   useEffect(() => {

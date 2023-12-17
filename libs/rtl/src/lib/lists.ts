@@ -7,7 +7,7 @@ import {
 } from '@rtl-extensions/dom';
 import { generateHash } from '@rtl-extensions/utils';
 import { isRTLText } from './is-rtl-text';
-import { executeDirectionDisabled } from './toggle';
+import { runOnDisabledFunctionality } from './functionality';
 import { swapIndentation } from './indentation';
 import { injectCSSOnceWrapper, injectCSSWrapper } from './style';
 
@@ -108,7 +108,7 @@ export function isListRTL({ list }: { list: HTMLElement }): boolean {
 }
 
 export function rtlListLayout({ list }: { list: HTMLElement }): void {
-  executeDirectionDisabled(() => {
+  runOnDisabledFunctionality(() => {
     if (computeStyle({ element: list }).get('direction') !== 'rtl') {
       swapListIndentation({
         list,
