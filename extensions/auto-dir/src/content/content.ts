@@ -10,11 +10,11 @@ import {
   observeChanges,
 } from '@rtl-extensions/dom';
 import {
-  applyRTLElement,
+  toggleRTLElement,
   fixTextAlign,
   flipBackground,
   getRTLEnabledValue,
-  isElementRTL,
+  isRTLGlobalEnabled,
   isRTLText,
   isToggleRTLGlobalMessage,
   swapBorders,
@@ -146,7 +146,10 @@ function observeDOMChanges() {
           .map(({ addedNodes }) =>
             Array.from(addedNodes)
               .filter(isHTMLElement)
-              .map((element) => [element, ...getPresentedNestedChildren(element)])
+              .map((element) => [
+                element,
+                ...getPresentedNestedChildren(element),
+              ])
               .flat()
           )
           .flat()
@@ -190,13 +193,13 @@ observeDOMChanges();
 observeClassNamesChanges();
 
 setInterval(() => {
-  const previous = isElementRTL(documentElement);
+  const previous = isRTLGlobalEnabled();
   const current = shouldRTLBeEnabled();
 
   if (previous === current) {
     return;
   }
 
-  applyRTLElement({ element: documentElement, enabled: current });
+  toggleRTLElement({ element: documentElement, enabled: current });
   fixLayout(getPresentedNestedChildren());
 }, 2000);

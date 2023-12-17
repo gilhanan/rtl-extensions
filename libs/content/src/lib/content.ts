@@ -4,6 +4,7 @@ import {
   getParentList,
   getPresentedNestedChildren,
   isHTMLElement,
+  isHTMLListElement,
   isInputElement,
   observeChanges,
   observeChangesOnce,
@@ -13,9 +14,9 @@ import {
   isToggleRTLGlobalMessage,
   isRTLText,
   toggleRTLGlobal,
-  applyRTLElement,
-  isRTLApplicable,
-  queryAndAplyRTL,
+  toggleRTLElement,
+  rtlListLayout,
+  isListRTL,
 } from '@rtl-extensions/rtl';
 
 async function initRTLGlobalEnabled(): Promise<void> {
@@ -30,13 +31,34 @@ async function initRTLGlobalEnabled(): Promise<void> {
   });
 }
 
+function isRTLApplicable(element: HTMLElement): boolean {
+  if (isHTMLListElement(element) && isListRTL({ list: element })) {
+    return true;
+  }
+
+  return Array.from(element.childNodes).some(
+    ({ nodeType, textContent }) =>
+      nodeType === Node.TEXT_NODE && isRTLText(textContent)
+  );
+}
+
+function toggleRTLElementWrapper(element: HTMLElement): void {
+  const enabled = isRTLApplicable(element);
+
+  toggleRTLElement({ element, enabled });
+
+  if (enabled && isHTMLListElement(element)) {
+    rtlListLayout({ list: element });
+  }
+}
+
 function observeInputsElements({ element }: { element: HTMLElement }) {
   getPresentedNestedChildren(element)
     .concat(element)
     .filter(isInputElement)
     .forEach((element) => {
       const callback = () =>
-        applyRTLElement({ element, enabled: isRTLText(element.textContent) });
+        toggleRTLElement({ element, enabled: isRTLText(element.textContent) });
 
       observeChangesOnce({
         target: element,
@@ -56,7 +78,9 @@ function observeInputsElements({ element }: { element: HTMLElement }) {
 
 function observeDOMChanges() {
   function callback(element: HTMLElement) {
-    queryAndAplyRTL({ element });
+    getPresentedNestedChildren(element)
+      .concat(element)
+      .forEach(toggleRTLElementWrapper);
     observeInputsElements({ element });
   }
 
@@ -85,16 +109,8 @@ function observeDOMChanges() {
 }
 
 function observeTextContentsChanges() {
-  const throttleProcessItems = throttleItems<Element>({
-    callback: (items) =>
-      [...items, ...items.map(getParentList)]
-        .filter(isHTMLElement)
-        .forEach((element) =>
-          applyRTLElement({
-            element,
-            enabled: isRTLApplicable(element),
-          })
-        ),
+  const throttleProcessItems = throttleItems<HTMLElement>({
+    callback: (items) => items.forEach(toggleRTLElementWrapper),
     limitInMs: 1000,
   });
 
@@ -108,7 +124,10 @@ function observeTextContentsChanges() {
       const items = mutations
         .map(({ target: { parentElement } }) => parentElement)
         .filter(isHTMLElement);
-      throttleProcessItems(items);
+
+      throttleProcessItems(
+        [...items, ...items.map(getParentList)].filter(isHTMLElement)
+      );
     },
   });
 }

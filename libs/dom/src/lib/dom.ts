@@ -79,8 +79,8 @@ export function toggleClass({
   }
 }
 
-export function getParentList(element: Element): Element | null {
-  return element.closest('ul, ol, dl');
+export function getParentList(element: Element): HTMLElement | null {
+  return element.closest('ul, ol, dl') as HTMLElement | null;
 }
 
 export function isInputElement(element: Element): boolean {
