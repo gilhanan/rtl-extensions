@@ -12,6 +12,7 @@ import {
 import {
   fixTextAlign,
   flipBackground,
+  flipImage,
   getFunctionalityAbilityValue,
   getGlobalDirection,
   isRTLText,
@@ -89,8 +90,9 @@ function fixNonInheritedLayout({
     swapPositions,
     swapTransform,
     swapFloat,
-    flipBackground,
     swapArrows,
+    flipBackground,
+    flipImage,
   ];
 
   const nonPseudoClasses = functions.map((fn) =>

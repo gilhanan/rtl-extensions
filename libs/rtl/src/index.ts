@@ -12,3 +12,4 @@ export * from './lib/background';
 export * from './lib/textAlign';
 export * from './lib/transform';
 export * from './lib/arrows';
+export * from './lib/image';

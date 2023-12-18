@@ -1,6 +1,5 @@
 import { isLetter } from '@rtl-extensions/utils';
 import { computeStyle } from './style';
-import { StylePropsCamelCase } from './shared';
 
 export const listItemsTags = ['li', 'dt', 'dd'];
 
@@ -46,6 +45,10 @@ export function isHTMLOListElement(node: Node): node is HTMLOListElement {
 
 export function isHTMLDListElement(node: Node): node is HTMLDListElement {
   return node instanceof HTMLDListElement;
+}
+
+export function isHTMLImageElement(node: Node): node is HTMLImageElement {
+  return node instanceof HTMLImageElement;
 }
 
 function isDisplayNone(node: Node): boolean {
